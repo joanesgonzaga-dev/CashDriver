@@ -1,0 +1,40 @@
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="CashDriver.Views.GanhosPage"
+    Title="Ganhos">
+
+    <VerticalStackLayout Padding="20" Spacing="15">
+
+        <!-- Cadastro -->
+        <Entry Placeholder="Descrição"
+               Text="{Binding Descricao}" />
+
+        <Entry Placeholder="Valor"
+               Keyboard="Numeric"
+               Text="{Binding Valor}" />
+
+        <Button Text="Adicionar"
+                Command="{Binding AdicionarGanhoCommand}" />
+
+        <!-- Lista -->
+        <CollectionView ItemsSource="{Binding Ganhos}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Padding="10" Margin="0,5" CornerRadius="10">
+                        <HorizontalStackLayout>
+
+                            <Label Text="{Binding Descricao}"
+                                   HorizontalOptions="StartAndExpand" />
+
+                            <Label Text="{Binding Valor, StringFormat='R$ {0:F2}'}"
+                                   TextColor="Green" />
+
+                        </HorizontalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </VerticalStackLayout>
+</ContentPage>

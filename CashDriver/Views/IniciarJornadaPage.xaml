@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="CashDriver.Views.IniciarJornadaPage"
+    Title="Iniciar Jornada">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="5*" />
+                <ColumnDefinition Width="5*" />
+            </Grid.ColumnDefinitions>
+            <!-- Título -->
+            <Label Grid.Row="0" Grid.Column="0" Text="Selecione as metas"
+                FontSize="18"
+                FontAttributes="Bold" />
+            <!-- Criar meta -->
+            <Button Grid.Row="0" Grid.Column="1"  Text="CRIAR META" Command="{Binding CriarMetaRapidoCommand}" />
+        </Grid>
+
+        <!-- Lista de metas -->
+        <ScrollView Grid.Row="1">
+            
+            <!-- Lista de metas -->
+            <CollectionView Grid.Row="1" ItemsSource="{Binding Metas}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame Padding="10" Margin="0,5" CornerRadius="12">
+                            <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+
+                                <CheckBox IsChecked="{Binding Selecionada}" />
+
+                                <VerticalStackLayout>
+                                    <Label Text="{Binding Nome}" FontAttributes="Bold"/>
+                                    <Label Text="{Binding ValorMeta, StringFormat='Meta: R$ {0:F2}'}"
+                                           FontSize="12"
+                                           TextColor="Gray"/>
+                                </VerticalStackLayout>
+
+                            </HorizontalStackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </ScrollView>
+
+        <!-- Iniciar -->
+        <Button Grid.Row="2" Text="INICIAR JORNADA"
+                Padding="5" Margin="10, 5, 10, 20"
+                 BackgroundColor="ForestGreen"
+                 FontSize="16"
+                 TextColor="White"
+                 Command="{Binding IniciarJornadaCommand}" />
+    </Grid>
+</ContentPage>

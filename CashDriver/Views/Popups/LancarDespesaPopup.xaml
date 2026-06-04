@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    x:Class="CashDriver.Views.Popups.LancarDespesaPopup">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="20">
+
+
+            <!-- HEADER -->
+            <Grid ColumnDefinitions="*,Auto">
+
+                <!-- TITULO -->
+                <VerticalStackLayout Spacing="2">
+
+                    <Label Text="Nova despesa"
+               FontSize="28"
+               FontAttributes="Bold"
+               TextColor="#111111"/>
+
+                    <Label Text="Lançamento rápido"
+               FontSize="14"
+               TextColor="#8E8E93"/>
+
+                </VerticalStackLayout>
+
+                <!-- FECHAR -->
+                <Border
+                    Grid.Column="1"
+                    WidthRequest="38"
+                    HeightRequest="38"
+                    BackgroundColor="#F2F2F7"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 19"
+                    HorizontalOptions="End"
+                    VerticalOptions="Start">
+
+                    <ImageButton
+                        Source="close_black_50dp.svg"
+                        BackgroundColor="Transparent"
+                        WidthRequest="18"
+                        HeightRequest="18"
+                        Padding="0"
+                        Clicked="FecharPopup_Clicked"/>
+
+                </Border>
+
+            </Grid>
+
+            <!-- CATEGORIA -->
+            <Border
+                BackgroundColor="#F5F5F7"
+                Padding="16"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 18">
+
+                <HorizontalStackLayout Spacing="12">
+
+                    <Picker
+                        Title="Selecione"
+                        ItemsSource="{Binding TiposDeDespesas}"
+                        SelectedItem="{Binding TipoDespesaSelecionada}"
+                        ItemDisplayBinding="{Binding DescricaoTipo}"/>
+
+                </HorizontalStackLayout>
+
+            </Border>
+
+            <!-- VALOR -->
+            <VerticalStackLayout Spacing="6">
+
+                <Label Text="Valor"
+                       FontSize="14"
+                       TextColor="#8E8E93"/>
+
+                <Border
+                    BackgroundColor="#F5F5F7"
+                    Padding="18,8"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 18">
+
+                    <Entry Text="{Binding Valor}"
+                           Keyboard="Numeric"
+                           FontSize="30"
+                           FontAttributes="Bold"
+                           Placeholder="0,00"
+                           TextColor="#111111"
+                           BackgroundColor="Transparent"/>
+
+                </Border>
+
+            </VerticalStackLayout>
+
+            <!-- OBSERVAÇÕES -->
+            <VerticalStackLayout Spacing="6">
+
+                <Label Text="Observações"
+                       FontSize="14"
+                       TextColor="#8E8E93"/>
+
+                <Border
+                    BackgroundColor="#F5F5F7"
+                    Padding="16"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 18">
+
+                    <Editor Text="{Binding Observacoes}"
+                            Placeholder="Opcional"
+                            AutoSize="TextChanges"
+                            BackgroundColor="Transparent"
+                            TextColor="#111111"/>
+
+                </Border>
+
+            </VerticalStackLayout>
+
+            <!-- BOTÃO -->
+            <Button Text="LANÇAR DESPESA"
+                    HeightRequest="60"
+                    CornerRadius="28"
+                    FontSize="17"
+                    FontAttributes="Bold"
+                    BackgroundColor="#111111"
+                    TextColor="White"
+                    Command="{Binding LancarCommand}"/>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</toolkit:Popup>

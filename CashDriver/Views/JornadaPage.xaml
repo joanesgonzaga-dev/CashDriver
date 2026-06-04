@@ -1,0 +1,683 @@
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:conv="clr-namespace:CashDriver.Converters"
+    x:Class="CashDriver.Views.JornadaPage"
+    BackgroundColor="#FAFAFA"
+    Shell.NavBarIsVisible="False"
+    Shell.BackgroundColor="#FAFAFA"
+    Shell.ForegroundColor="#111111"
+    Shell.TitleColor="#111111">
+
+    <ContentPage.Resources>
+
+        <ResourceDictionary>
+
+            <conv:TipoMetaParaIconeConverter x:Key="TipoMetaParaIconeConverter"/>
+
+            <!-- CARD -->
+            <Style x:Key="CardStyle" TargetType="Border">
+                <Setter Property="BackgroundColor" Value="White"/>
+                <Setter Property="Stroke" Value="#ECECEC"/>
+                <Setter Property="StrokeThickness" Value="1"/>
+                <Setter Property="Padding" Value="0"/>
+                <Setter Property="Shadow">
+                    <Shadow Brush="#12000000"
+                            Offset="0,2"
+                            Radius="8"
+                            Opacity="0.08"/>
+                </Setter>
+                <Setter Property="StrokeShape">
+                    <RoundRectangle CornerRadius="10"/>
+                </Setter>
+            </Style>
+
+            <!-- TITULOS -->
+            <Style x:Key="SectionTitleStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="18"/>
+                <Setter Property="FontFamily" Value="Inter18ptRegular"/>
+                <Setter Property="TextColor" Value="#8E8E93"/>
+            </Style>
+
+        </ResourceDictionary>
+
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <!-- HEADER -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*" BackgroundColor="#071B34" >
+            <VerticalStackLayout Padding="10,0,0,15">
+
+                <Label Text="Jornada atual" FontSize="25" TextColor="WhiteSmoke" FontFamily="Inter18ptBold"/>
+                <Label Text="Acompanhe seus resultados em tempo real" FontSize="12" TextColor="#F5F7FA" FontFamily="Inter18ptRegular"/>
+            </VerticalStackLayout>
+
+            <Border
+                HorizontalOptions="End"
+                Grid.Column="1"
+                WidthRequest="50"
+                HeightRequest="50"
+                BackgroundColor="#2622A06B"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 25"
+                Margin="25,0">
+
+                <Image
+                    WidthRequest="30"
+                    HeightRequest="30"
+                    VerticalOptions="Center"
+                    Source="car_stronggreen_60dp.png" />
+                
+            </Border>
+
+        </Grid>
+        
+        <!-- CONTEÚDO -->
+        <ScrollView Grid.Row="1">
+
+            <VerticalStackLayout Padding="10,20,10,120" Spacing="10">
+                
+                <!-- CARD RESUMOS -->
+                <Border Style="{StaticResource CardStyle}">
+                    <Grid RowDefinitions="Auto" >
+                        
+                        <Grid Grid.Row="0" ColumnDefinitions="70,Auto,*" >
+                            <Border
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Padding="15"
+                                WidthRequest="50"
+                                HeightRequest="50"
+                                BackgroundColor="#DDF5EA"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 10"
+                                Margin="15"
+                                VerticalOptions="Center"
+                                HorizontalOptions="Center">
+
+                                <Image
+                                    WidthRequest="30"
+                                    HeightRequest="30"
+                                    VerticalOptions="Center"
+                                    Source="clock_green_60dp.png" />
+                            </Border>
+
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                <Label Grid.Row="0" Text="Tempo de jornada"               FontFamily="Inter18ptSemiBold" TextColor="#8E8E93"/>
+                                <Label Grid.Row="1" Text="{Binding DuracaoFormatada}"         FontSize="22" FontFamily="Inter18ptBold"     TextColor="#071B34"/>
+                                <Label Grid.Row="2" IsVisible="{Binding Ativa}" Text="{Binding HoraInicio}" FontFamily="Inter18ptRegular" TextColor="#8E8E93"/>
+                                <Label Grid.Row="2" IsVisible="{Binding Pausada}" Text="{Binding HoraInicio}" FontFamily="Inter18ptRegular" TextColor="#8E8E93"/>
+                            </VerticalStackLayout>
+
+                            <!-- BOTÃO PAUSAR -->
+                            <Border
+                                IsVisible="{Binding Ativa}"
+                                Grid.Column="2"
+                                Padding="5"
+                                Margin="0,0,5,0"
+                                BackgroundColor="#DDF5EA"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 18"
+                                HeightRequest="35"
+                                WidthRequest="120">
+
+                                <Grid ColumnDefinitions="*,*" >
+                                    <!-- Ícone -->
+                                    <Image
+                                        Source="pause_strongbold_60dp.png"
+                                        WidthRequest="25"
+                                        HeightRequest="25"
+                                        Margin="5,0,30,0"
+                                        VerticalOptions="Start"
+                                        HorizontalOptions="Start"/>
+
+                                    <!-- Texto -->
+                                    <Label
+                                        Grid.ColumnSpan="2"
+                                        Text="PAUSAR"
+                                        FontSize="12"
+                                        FontFamily="Inter18ptBold"
+                                        TextColor="#19C37D"
+                                        HorizontalTextAlignment="End"
+                                        VerticalTextAlignment="Center"
+                                        VerticalOptions="Center"
+                                        HorizontalOptions="End"
+                                        Padding="0,0,15,0"/>
+
+                                    <!-- Clique -->
+                                    <Grid.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding PausarJornadaCommand}" />
+                                    </Grid.GestureRecognizers>
+                                </Grid>
+                            </Border>
+
+                            <!-- BOTÃO RETOMAR -->
+                            <Border
+                                IsVisible="{Binding Pausada}"
+                                Grid.Column="2"
+                                Padding="5"
+                                Margin="0,0,5,0"
+                                BackgroundColor="#FFF4D6"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 18"
+                                HeightRequest="35"
+                                WidthRequest="120">
+
+                                <Grid ColumnDefinitions="*,*" >
+                                    <!-- Ícone -->
+                                    <Image
+                                        Source="play_pause_yellow_60dp.png"
+                                        WidthRequest="25"
+                                        HeightRequest="25"
+                                        Margin="5,0,30,0"
+                                        VerticalOptions="Start"
+                                        HorizontalOptions="Start"/>
+
+                                    <!-- Texto -->
+                                    <Label
+                                        Grid.ColumnSpan="2"
+                                        Text="RETOMAR"
+                                        FontSize="12"
+                                        FontFamily="Inter18ptBold"
+                                        TextColor="#D4A017"
+                                        HorizontalTextAlignment="End"
+                                        VerticalTextAlignment="Center"
+                                        VerticalOptions="Center"
+                                        HorizontalOptions="End"
+                                        Padding="0,0,15,0"/>
+
+                                    <!-- Clique -->
+                                    <Grid.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding RetomarJornadaCommand}" />
+                                    </Grid.GestureRecognizers>
+                                </Grid>
+                            </Border>
+
+                        </Grid>
+
+                        <!--<Grid Grid.Row="1">
+                            <Grid Padding="8,0,10,8">
+                                <Border HeightRequest="75" BackgroundColor="#063532" StrokeThickness="0" StrokeShape="15">
+                                    <Grid ColumnDefinitions="Auto,Auto,auto">
+                                        <Grid Grid.Column="0" ColumnDefinitions="*,*" Padding="10,0,0,0" VerticalOptions="Center">
+                                            <Border
+                                                HorizontalOptions="End"
+                                                Grid.Column="0"
+                                                WidthRequest="32"
+                                                HeightRequest="32"
+                                                BackgroundColor="#2622A06B"
+                                                StrokeThickness="0"
+                                                StrokeShape="RoundRectangle 10"
+                                                >
+
+                                                <Image
+                                                    WidthRequest="19"
+                                                    HeightRequest="19"
+                                                    VerticalOptions="Center"
+                                                    Source="money_green_60dp.png" />
+
+                                            </Border>
+                                            <VerticalStackLayout Grid.Column="1">
+                                                <Label Text="GANHOS" FontSize="10" FontFamily="Inter18ptBold" Margin="10,0,0,0"  TextColor="#8E8E93"/>
+                                                <Label Text="R$ 699,54" FontSize="11" FontFamily="Inter18ptSemiBold" Margin="10,0,0,0"  TextColor="#19C37D"/>
+                                            </VerticalStackLayout>
+
+                                        </Grid>
+
+                                        <Grid Grid.Column="1" ColumnDefinitions="*,*" Padding="10,0,0,0" VerticalOptions="Center">
+                                            <Border
+                                                HorizontalOptions="End"
+                                                Grid.Column="0"
+                                                WidthRequest="32"
+                                                HeightRequest="32"
+                                                BackgroundColor="#40E74C3C"
+                                                StrokeThickness="0"
+                                                StrokeShape="RoundRectangle 10"
+                                                >
+
+                                                <Image
+                                                    WidthRequest="19"
+                                                    HeightRequest="19"
+                                                    VerticalOptions="Center"
+                                                    Source="money_red_60dp.png" />
+                                            </Border>
+                                            <VerticalStackLayout Grid.Column="1">
+                                                <Label Text="DESPESAS" FontSize="10" FontFamily="Inter18ptBold" Margin="10,0,0,0"  TextColor="#8E8E93"/>
+                                                <Label Text="R$ 185,60" FontSize="11" FontFamily="Inter18ptBold" Margin="10,0,0,0"  TextColor="OrangeRed"/>
+                                            </VerticalStackLayout>
+                                        </Grid>
+
+                                        <Grid Grid.Column="2" ColumnDefinitions="*,*" Padding="10,0,0,0" VerticalOptions="Center">
+                                            <Border
+                                                HorizontalOptions="End"
+                                                Grid.Column="0"
+                                                WidthRequest="32"
+                                                HeightRequest="32"
+                                                BackgroundColor="#163B63"
+                                                StrokeThickness="0"
+                                                StrokeShape="RoundRectangle 10"
+                                                >
+
+                                                <Image
+                                                    WidthRequest="19"
+                                                    HeightRequest="19"
+                                                    VerticalOptions="Center"
+                                                    Source="moneybag_blue_60dp.png" />
+                                                
+                                            </Border>
+                                            <VerticalStackLayout Grid.Column="1">
+                                                <Label Text="LUCRO" FontSize="10" FontFamily="Inter18ptBold" Margin="10,0,0,0"  TextColor="#8E8E93"/>
+                                                <Label Text="R$ 513,94" FontSize="11" FontFamily="Inter18ptSemiBold" Margin="10,0,0,0"  TextColor="#F5F7FA" />
+                                            </VerticalStackLayout>
+
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+                            </Grid>
+                        </Grid>-->
+                    </Grid>
+                   
+                </Border>
+
+                <!-- RESUMO -->
+                <Grid ColumnDefinitions="5*,5*"
+                      ColumnSpacing="2">
+
+                    <!-- GANHOS -->
+                    <Border Grid.Column="0" Style="{StaticResource CardStyle}" BackgroundColor="#2622A06B" Padding="15">
+                        <VerticalStackLayout Spacing="12">
+                            <HorizontalStackLayout VerticalOptions="Center">
+                                <Border
+                                     WidthRequest="46"
+                                     HeightRequest="46"
+                                     BackgroundColor="#2622A06B"
+                                     StrokeThickness="0"
+                                     StrokeShape="RoundRectangle 16">
+
+                                    <Label Text="↑"
+                                        FontSize="22"
+                                        TextColor="#34C759"
+                                        FontFamily="Inter18ptSemiBold"
+                                        HorizontalOptions="Center"
+                                        VerticalOptions="Center"/>
+                                </Border>
+                                <Label Text="GANHOS"
+                                   FontSize="15"
+                                   FontFamily="Inter18ptBold"
+                                       VerticalTextAlignment="Center"
+                                       Margin="10"
+                                   TextColor="#8E8E93"/>
+                            </HorizontalStackLayout>
+
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="{Binding TotalGanhos, StringFormat='R$ {0:F2}'}"
+                                       FontSize="26"
+                                       FontFamily="Inter18ptSemiBold"
+                                       TextColor="#19C37D"/>
+
+                            </VerticalStackLayout>
+
+                            <Button Text="ADICIONAR"
+                                    HeightRequest="42"
+                                    CornerRadius="18"
+                                    BackgroundColor="#F4F4F5"
+                                    TextColor="#111111"
+                                    FontFamily="Inter18ptSemiBold"
+                                    Command="{Binding AdicionarGanhoCommand}"/>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- DESPESAS -->
+                    <Border Grid.Column="1" Style="{StaticResource CardStyle}" BackgroundColor="#40E74C3C" Padding="15">
+                        <VerticalStackLayout Spacing="12">
+                            <HorizontalStackLayout VerticalOptions="Center">
+                                <Border
+                                     WidthRequest="46"
+                                     HeightRequest="46"
+                                     BackgroundColor="#40E74C3C"
+                                     StrokeThickness="0"
+                                     StrokeShape="RoundRectangle 16">
+
+                                    <Label
+                                        Text="↓"
+                                        FontSize="22"
+                                        TextColor="#FF3B30"
+                                        FontFamily="Inter18ptSemiBold"
+                                        HorizontalOptions="Center"
+                                        VerticalOptions="Center"/>
+                                </Border>
+
+                                <Label Text="DESPESAS"
+                                   FontSize="15"
+                                   FontFamily="Inter18ptBold"
+                                   VerticalTextAlignment="Center"
+                                   Margin="10"
+                                   TextColor="#8E8E93"
+                                       />
+                            </HorizontalStackLayout>
+
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="{Binding TotalDespesas, StringFormat='R$ {0:F2}'}"
+                                   FontSize="26"
+                                   FontFamily="Inter18ptSemiBold"
+                                   TextColor="OrangeRed"/>
+
+                            </VerticalStackLayout>
+
+                            <Button Text="ADICIONAR"
+                                HeightRequest="42"
+                                CornerRadius="18"
+                                BackgroundColor="#F4F4F5"
+                                TextColor="#111111"
+                                FontFamily="Inter18ptSemiBold"
+                                Command="{Binding AdicionarDespesaCommand}"/>
+
+                        </VerticalStackLayout>
+                    </Border>
+                    
+                    <!--
+                    <Border Grid.Column="1"
+                            Style="{StaticResource CardStyle}">
+
+                        <VerticalStackLayout Spacing="12">
+
+                            <Border
+                                WidthRequest="46"
+                                HeightRequest="46"
+                                BackgroundColor="#FFF1F1"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 16">
+
+                                <Label Text="↓"
+                                       FontSize="22"
+                                       TextColor="#FF3B30"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center"/>
+                            </Border>
+
+                            <VerticalStackLayout Spacing="2">
+
+                                <Label Text="Despesas"
+                                       FontSize="14"
+                                       TextColor="#8E8E93"/>
+
+                                <Label Text="{Binding TotalDespesas, StringFormat='R$ {0:F2}'}"
+                                       FontSize="26"
+                                       FontAttributes="Bold"
+                                       TextColor="#111111"/>
+                            </VerticalStackLayout>
+
+                            <Button Text="Registrar"
+                                    HeightRequest="42"
+                                    CornerRadius="18"
+                                    BackgroundColor="#F4F4F5"
+                                    TextColor="#111111"
+                                    FontAttributes="Bold"
+                                    Command="{Binding AdicionarDespesaCommand}"/>
+                        </VerticalStackLayout>
+
+                    </Border>
+                    -->
+
+                </Grid>
+
+                <!-- LUCRO verde escurão: #063532 -->
+                <Border Style="{StaticResource CardStyle}" BackgroundColor="#D9ECFF" Padding="15">
+
+                    <Grid ColumnDefinitions="Auto,*">
+                        <Border
+                            HorizontalOptions="End"
+                            Grid.Column="0"
+                            WidthRequest="46"
+                            HeightRequest="46"
+                            StrokeThickness="0"
+                            BackgroundColor="#D9ECFF"
+                            
+                            StrokeShape="RoundRectangle 10">
+
+                            <Image
+                                VerticalOptions="Center"
+                                Source="moneybag_blue_60dp.png" />
+                        </Border>
+
+                        <VerticalStackLayout Grid.Column="1" Padding="0">
+
+                            <Label Text="LUCRO ATUAL"
+                                   FontSize="15"
+                                   FontFamily="Inter18ptBold"
+                                   VerticalTextAlignment="Center"
+                                   Margin="10,0"
+                                   TextColor="#8E8E93"/>
+                            
+                            <Label Text="{Binding Lucro, StringFormat='R$ {0:F2}'}"
+                                   Margin="10,0"
+                                   FontSize="30"
+                                   FontFamily="Inter18ptSemiBold"
+                                   TextColor="#163B63"/>
+                        </VerticalStackLayout>
+                    </Grid>
+
+                </Border>
+
+                <!-- EXTRATO -->
+                <VerticalStackLayout
+                    IsVisible="{Binding TemLancamentos}">
+
+                    <Label Text="Extrato"
+                           Style="{StaticResource SectionTitleStyle}" Margin="5, 2"/>
+
+                    <CollectionView ItemsSource="{Binding Extrato}">
+
+                        <CollectionView.ItemTemplate>
+
+                            <DataTemplate>
+
+                                <Border Style="{StaticResource CardStyle}"
+                                        Margin="3,3">
+                                    
+                                    <!-- DEFINE BACKGROUND DO BORDER-->
+                                    
+                                    <!-- GANHO -->
+                                    <Border.Triggers>
+                                        <DataTrigger
+                                            TargetType="Border"
+                                            Binding="{Binding Tipo}"
+                                            Value="Ganho">
+                                            <Setter Property="BackgroundColor" Value="#2622A06B">
+                                            </Setter>
+                                        </DataTrigger>
+
+                                        <!-- DESPESA -->
+                                        <DataTrigger
+                                            TargetType="Border"
+                                            Binding="{Binding Tipo}"
+                                            Value="Despesa">                    
+                                            <Setter Property="BackgroundColor" Value="#40E74C3C">
+                                            </Setter>
+                                        </DataTrigger>
+                                    </Border.Triggers>
+                                   
+                                    <Grid ColumnDefinitions="Auto,*,Auto" Padding="10">
+
+                                        <!-- ÍCONE -->
+                                        <!-- Excluir -->
+                                        <Button
+                                            Margin="3"
+                                            Padding="8"
+                                            Grid.Column="0"
+                                            ImageSource="delete_white_50dp.svg"
+                                            BackgroundColor="red"
+                                            WidthRequest="30"
+                                            HeightRequest="30"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeletarLancamentoExtratoCommand}"
+                                            CommandParameter="{Binding .}" />
+
+                                        <!-- TEXTO -->
+                                        <VerticalStackLayout Grid.Column="1"
+                                                             Margin="14,0"
+                                                             Spacing="2">
+
+                                            <Label Text="{Binding Descricao}"
+                                                   FontSize="16"
+                                                   FontFamily="Inter18ptBold"
+                                                   TextColor="#111111"/>
+
+                                            <Label Text="{Binding Tipo}"
+                                                   FontSize="14"
+                                                   FontFamily="Inter18ptSemiBold"
+                                                   TextColor="#8E8E93"/>
+                                        </VerticalStackLayout>
+
+                                        <!-- VALOR -->
+                                        <Label Grid.Column="2"
+                                               Text="{Binding ValorTexto}"
+                                               FontSize="16"
+                                               FontFamily="Inter18ptBold"
+                                               TextColor="{Binding ValorColor}"
+                                               VerticalOptions="Center"/>
+
+                                    </Grid>
+
+                                </Border>
+
+                            </DataTemplate>
+
+                        </CollectionView.ItemTemplate>
+
+                    </CollectionView>
+
+                </VerticalStackLayout>
+
+                <!-- METAS -->
+                <VerticalStackLayout
+                    IsVisible="{Binding TemMetas}">
+
+                    <Label Text="Metas"
+                           Style="{StaticResource SectionTitleStyle}" Margin="5, 2"/>
+
+                    <CollectionView ItemsSource="{Binding Metas}">
+
+                        <CollectionView.ItemTemplate>
+
+                            <DataTemplate>
+
+                                <Border Style="{StaticResource CardStyle}"
+                                        Margin="3,3">
+
+                                    <VerticalStackLayout Spacing="16">
+
+                                        <!-- HEADER -->
+                                        <Grid ColumnDefinitions="*,Auto" Margin="15,4">
+
+                                            <VerticalStackLayout Spacing="2">
+
+                                                <Label Text="{Binding Nome}"
+                                                       FontSize="16"
+                                                        FontFamily="Inter18ptBold"
+                                                        TextColor="#111111"/>
+
+                                                <Label Text="{Binding ValorAtual, StringFormat='Atual: {0:C}'}"
+                                                       FontFamily="Inter18ptRegular"
+                                                       FontSize="14"
+                                                       TextColor="#8E8E93"/>
+
+                                            </VerticalStackLayout>
+                                            <!-- 
+                                            <Border
+                                                WidthRequest="46"
+                                                HeightRequest="46"
+                                                BackgroundColor="#F5F5F7"
+                                                StrokeThickness="0"
+                                                StrokeShape="RoundRectangle 16">
+
+                                                <Image Source="{Binding Tipo, Converter={StaticResource TipoMetaParaIconeConverter}}"
+                                                       WidthRequest="22"
+                                                       HeightRequest="22"
+                                                       HorizontalOptions="Center"
+                                                       VerticalOptions="Center"/>
+                                            </Border>
+                                            -->
+                                        </Grid>
+
+                                        <!-- BARRA -->
+                                        <ProgressBar Progress="{Binding Progresso}"
+                                                     Margin="15,0"
+                                                     HeightRequest="6"
+                                                     BackgroundColor="#E5E5EA"
+                                                     ProgressColor="#111111"/>
+
+                                        <!-- FOOTER -->
+                                        <Grid ColumnDefinitions="*,Auto" Margin="15,2">
+
+                                            <Label Text="{Binding Progresso, StringFormat='{0:P0} concluído'}"
+                                                   FontFamily="Inter18ptRegular"
+                                                   FontSize="14"
+                                                   TextColor="#8E8E93"/>
+
+                                            <Label Grid.Column="1"
+                                                   Text="{Binding ValorMeta, StringFormat='Meta: {0:C}'}"
+                                                   FontSize="13"
+                                                   FontFamily="Inter18ptBold"
+                                                   TextColor="#163B63"/>
+
+                                        </Grid>
+
+                                    </VerticalStackLayout>
+
+                                </Border>
+
+                            </DataTemplate>
+
+                        </CollectionView.ItemTemplate>
+
+                    </CollectionView>
+
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+
+        </ScrollView>
+
+        <!-- BOTÃO INFERIOR -->
+        <Grid Grid.Row="2"
+              Padding="22,10,22,2"
+              BackgroundColor="#FAFAFA">
+
+            <!-- INICIAR -->
+            <Button Text="INICIAR JORNADA"
+                    IsVisible="{Binding Inativa}"
+                    HeightRequest="62"
+                    CornerRadius="28"
+                    FontSize="17"
+                    FontAttributes="Bold"
+                    BackgroundColor="#111111"
+                    TextColor="White"
+                    Command="{Binding IniciarJornadaCommand}"/>
+
+            <!-- ENCERRAR -->
+            <Button Text="ENCERRAR JORNADA"
+                    IsVisible="{Binding Ativa}"
+                    HeightRequest="62"
+                    CornerRadius="28"
+                    FontSize="17"
+                    FontAttributes="Bold"
+                    BackgroundColor="#FF3B30"
+                    TextColor="White"
+                    Command="{Binding EncerrarJornadaCommand}"/>
+
+            <Button Text="ENCERRAR JORNADA"
+                    IsVisible="{Binding Pausada}"
+                    HeightRequest="62"
+                    CornerRadius="28"
+                    FontSize="17"
+                    FontAttributes="Bold"
+                    BackgroundColor="#FF3B30"
+                    TextColor="White"
+                    Command="{Binding EncerrarJornadaCommand}"/>
+
+        </Grid>
+
+    </Grid>
+
+</ContentPage>

@@ -1,0 +1,244 @@
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:conv="clr-namespace:CashDriver.Converters"
+    x:Class="CashDriver.Views.DespesasListPage"
+    BackgroundColor="#FAFAFA"
+    Title="Despesas"
+    Shell.NavBarIsVisible="false"
+    Shell.BackgroundColor="#FAFAFA"
+    Shell.ForegroundColor="#111111"
+    Shell.TitleColor="#111111">
+
+    <ContentPage.Resources>
+
+        <ResourceDictionary>
+
+            <conv:TipoDespesaParaIconeConverter x:Key="TipoDespesaParaIconeConverter"/>
+
+            <!-- CARD -->
+            <Style x:Key="CardStyle" TargetType="Border">
+                <Setter Property="BackgroundColor" Value="White"/>
+                <Setter Property="Stroke" Value="#ECECEC"/>
+                <Setter Property="StrokeThickness" Value="1"/>
+                <Setter Property="Padding" Value="18"/>
+                <Setter Property="Shadow">
+                    <Shadow Brush="#12000000"
+                            Offset="0,2"
+                            Radius="8"
+                            Opacity="0.08"/>
+                </Setter>
+                <Setter Property="StrokeShape">
+                    <RoundRectangle CornerRadius="20"/>
+                </Setter>
+            </Style>
+
+            <!-- TITULO -->
+            <Style x:Key="SectionTitleStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="28"/>
+                <Setter Property="FontAttributes" Value="Bold"/>
+                <Setter Property="TextColor" Value="#111111"/>
+            </Style>
+
+            <!-- SUBTITULO -->
+            <Style x:Key="SubtitleStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="TextColor" Value="#8E8E93"/>
+            </Style>
+
+        </ResourceDictionary>
+
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="*,Auto">
+
+        <!-- CONTEÚDO -->
+        <ScrollView Grid.Row="0">
+
+            <VerticalStackLayout Padding="15,28,15,120"
+                                 Spacing="18">
+
+                <!-- HEADER -->
+                <Grid ColumnDefinitions="*,Auto">
+
+                    <VerticalStackLayout Grid.Column="0" Spacing="2">
+
+                        <Label Text="Tipos de Despesas"
+                               Style="{StaticResource SectionTitleStyle}"/>
+
+                        <Label Text="Gerencie seus gastos da jornada"
+                               Style="{StaticResource SubtitleStyle}"/>
+
+                    </VerticalStackLayout>
+
+                    <Border Grid.Column="1"
+                        WidthRequest="52"
+                        HeightRequest="52"
+                        BackgroundColor="#FFF1F1"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 18"
+                        VerticalOptions="Center">
+
+                        <Label Text="💸"
+                               FontSize="24"
+                               TextColor="#FF3B30"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"/>
+
+                    </Border>
+
+                </Grid>
+
+                <!-- RESUMO -->
+                <Border Style="{StaticResource CardStyle}">
+
+                    <Grid ColumnDefinitions="*,Auto">
+
+                        <VerticalStackLayout Spacing="4">
+
+                            <Label Text="Total de despesas"
+                                   FontSize="14"
+                                   TextColor="#8E8E93"/>
+
+                            <Label Text="R$ 58,90"
+                                   FontSize="34"
+                                   FontAttributes="Bold"
+                                   TextColor="#111111"/>
+
+                        </VerticalStackLayout>
+
+                        <Border
+                            Grid.Column="1"
+                            Padding="12,6"
+                            BackgroundColor="#FFF1F1"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 14"
+                            VerticalOptions="Center">
+
+                            <Label Text="Atual"
+                                   FontSize="13"
+                                   FontAttributes="Bold"
+                                   TextColor="#FF3B30"/>
+
+                        </Border>
+
+                    </Grid>
+
+                </Border>
+
+                <!-- LISTAGEM -->
+                <CollectionView ItemsSource="{Binding Despesas}">
+
+                    <CollectionView.ItemTemplate>
+
+                        <DataTemplate>
+
+                            <Border Style="{StaticResource CardStyle}"
+                                    Margin="0,0,0,12">
+
+                                <Grid RowDefinitions="*,*" ColumnSpacing="8">
+                                    <Grid Grid.Row="0" ColumnDefinitions="*,Auto" HorizontalOptions="Start">
+                                        <!-- Ícone -->
+                                        <Border
+                                            Grid.Row="0"
+                                            Grid.Column="0"
+                                            WidthRequest="52"
+                                            HeightRequest="52"
+                                            BackgroundColor="#F5F5F7"
+                                            StrokeThickness="0"
+                                            StrokeShape="RoundRectangle 16"
+                                            Margin="3">
+
+                                            <Image Source="{Binding Tipo, Converter={StaticResource TipoDespesaParaIconeConverter}}"
+                                                WidthRequest="24"
+                                                HeightRequest="24"
+                                                VerticalOptions="Center" />
+
+                                        </Border>
+                                       
+                                        <!-- Nome -->
+                                        <Label Grid.Row="0"
+                                            Grid.Column="1"
+                                            Text="{Binding DescricaoTipo}"
+                                            FontSize="16"
+                                            FontAttributes="Bold"
+                                            VerticalOptions="Center"
+                                               Margin="3"/>
+                                    </Grid>
+
+                                    <Grid Grid.Row="1" ColumnDefinitions="*,Auto">
+                                          
+                                        <Grid Grid.Column="1" ColumnDefinitions="*,*,*" HorizontalOptions="End">
+
+                                            <!-- Visualizar -->
+                                            <Button
+                                                Margin="5"
+                                                Padding="10"
+                                                Grid.Column="0"
+                                                ImageSource="view_whte_50dp.svg"
+                                                BackgroundColor="Purple"
+                                                WidthRequest="30"
+                                                HeightRequest="30"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.VisualizarCommand}"
+                                                CommandParameter="{Binding .}" />
+
+                                            <!-- Editar -->
+                                            <Button
+                                                Margin="5"
+                                                Padding="10"
+                                                Grid.Column="1"
+                                                ImageSource="edit_white_50dp.svg"
+                                                BackgroundColor="Blue"
+                                                WidthRequest="32"
+                                                HeightRequest="32"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EditarDespesaCommand}"
+                                                CommandParameter="{Binding .}" />
+
+                                            <!-- Excluir -->                                            
+                                            <Button
+                                                Margin="5"
+                                                Padding="10"
+                                                Grid.Column="2"
+                                                ImageSource="delete_white_50dp.svg"
+                                                BackgroundColor="red"
+                                                WidthRequest="32"
+                                                HeightRequest="32"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeletarDespesaCommand}"
+                                                CommandParameter="{Binding .}" />
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                                
+                                
+
+                            </Border>
+
+                        </DataTemplate>
+
+                    </CollectionView.ItemTemplate>
+
+                </CollectionView>
+
+            </VerticalStackLayout>
+
+        </ScrollView>
+
+        <!-- BOTÃO INFERIOR -->
+        <Grid Grid.Row="1"
+              Padding="22,10,22,2"
+              BackgroundColor="#FAFAFA">
+
+            <Button Text="NOVA DESPESA"
+                    HeightRequest="62"
+                    CornerRadius="28"
+                    FontSize="17"
+                    FontAttributes="Bold"
+                    BackgroundColor="#111111"
+                    TextColor="White"
+                    Command="{Binding CriarDespesaRapidoCommand}"/>
+
+        </Grid>
+
+    </Grid>
+
+</ContentPage>

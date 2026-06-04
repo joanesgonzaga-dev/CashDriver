@@ -1,0 +1,240 @@
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:conv="clr-namespace:CashDriver.Converters"
+    x:Class="CashDriver.Views.MetasListPage"
+    BackgroundColor="#FAFAFA"
+    Title="Metas"
+    Shell.NavBarIsVisible="False"
+    Shell.BackgroundColor="#FAFAFA"
+    Shell.ForegroundColor="#111111"
+    Shell.TitleColor="#111111">
+
+    <ContentPage.Resources>
+
+        <ResourceDictionary>
+
+            <conv:TipoDespesaParaIconeConverter x:Key="TipoMetaParaIconeConverter"/>
+
+            <!-- CARD -->
+            <Style x:Key="CardStyle" TargetType="Border">
+                <Setter Property="BackgroundColor" Value="White"/>
+                <Setter Property="Stroke" Value="#ECECEC"/>
+                <Setter Property="StrokeThickness" Value="1"/>
+                <Setter Property="Padding" Value="18"/>
+                <Setter Property="Shadow">
+                    <Shadow Brush="#12000000"
+                            Offset="0,2"
+                            Radius="8"
+                            Opacity="0.08"/>
+                </Setter>
+                <Setter Property="StrokeShape">
+                    <RoundRectangle CornerRadius="20"/>
+                </Setter>
+            </Style>
+
+            <!-- TÍTULO -->
+            <Style x:Key="TitleStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="28"/>
+                <Setter Property="FontAttributes" Value="Bold"/>
+                <Setter Property="TextColor" Value="#111111"/>
+            </Style>
+
+        </ResourceDictionary>
+
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="*,Auto">
+
+        <!-- CONTEÚDO -->
+        <ScrollView Grid.Row="0">
+
+            <VerticalStackLayout Padding="15,28,15,120"
+                                 Spacing="18">
+
+                <!-- HEADER -->
+                <Grid ColumnDefinitions="*,Auto">
+
+                    <VerticalStackLayout Grid.Column="0" Spacing="2">
+
+                        <Label Text="Metas"
+                               Style="{StaticResource TitleStyle}"/>
+
+                        <Label Text="Acompanhe seus objetivos financeiros"
+                               FontSize="14"
+                               TextColor="#8E8E93"/>
+
+                    </VerticalStackLayout>
+
+                    <Border Grid.Column="1"
+                        WidthRequest="50"
+                        HeightRequest="50"
+                        BackgroundColor="#F2F2F7"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 18"
+                        VerticalOptions="Center">
+
+                        <Label Text="🎯"
+                               FontSize="22"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"/>
+
+                    </Border>
+
+                </Grid>
+
+                <!-- LISTA -->
+                <CollectionView ItemsSource="{Binding Metas}"
+                                SelectionMode="None">
+
+                    <CollectionView.ItemTemplate>
+
+                        <DataTemplate>
+                            <!-- CARD -->
+                            <Border Style="{StaticResource CardStyle}"
+                                    Margin="0,0,0,10">
+                                
+                                <!-- GRID DO CARD -->
+                                <Grid RowDefinitions="*,*" ColumnDefinitions="Auto,*">
+
+                                    <!-- CHECK -->
+                                        <CheckBox Grid.Row="0" Grid.Column="0" IsChecked="{Binding Selecionada}"
+                                                  VerticalOptions="Start"
+                                                  Color="#111111"/>
+
+                                        <!-- CONTEÚDO -->
+                                        <VerticalStackLayout Grid.Row="0" Grid.Column="1"
+                                                             Spacing="12">
+
+                                            
+                                            <Grid ColumnDefinitions="Auto,Auto"
+                                                  ColumnSpacing="10">
+
+                                                <!-- ÍCONE 
+                                                <Border
+                                                    WidthRequest="52"
+                                                    HeightRequest="52"
+                                                    BackgroundColor="#F5F5F7"
+                                                    StrokeThickness="0"
+                                                    StrokeShape="RoundRectangle 16"
+                                                    Margin="3">
+
+                                                    <Image Source="{Binding Tipo, Converter={StaticResource TipoMetaParaIconeConverter}}"
+                                                           WidthRequest="22"
+                                                           HeightRequest="22"
+                                                           HorizontalOptions="Center"
+                                                           VerticalOptions="Center"/>
+
+                                                </Border>
+                                                -->
+                                                
+                                                <!-- NOME -->
+                                                <Grid Grid.Column="1">
+
+                                                <Label Text="{Binding Nome}"
+                                                           FontSize="17"
+                                                           FontAttributes="Bold"
+                                                           TextColor="#111111" VerticalOptions="Center"/>
+
+                                            </Grid>
+
+                                            </Grid>
+
+                                            <!-- PROGRESS -->
+                                            <ProgressBar Progress="{Binding Progresso}"
+                                                         HeightRequest="8"
+                                                         BackgroundColor="#E5E5EA"
+                                                         ProgressColor="#111111"/>
+
+                                            <!-- FOOTER -->
+                                            <Grid ColumnDefinitions="*,Auto">
+
+                                                <Label Text="{Binding Progresso, StringFormat='{0:P0} concluído'}"
+                                                       FontSize="13"
+                                                       TextColor="#8E8E93"/>
+
+                                                <Label Grid.Column="1"
+                                                       Text="Em andamento"
+                                                       FontSize="13"
+                                                       FontAttributes="Bold"
+                                                       TextColor="#34C759"/>
+
+                                            </Grid>
+
+                                        </VerticalStackLayout>
+
+                                        <!-- AÇÕES -->
+                                        <Grid Grid.Row="1" ColumnDefinitions="*,*,*" HorizontalOptions="End" Grid.ColumnSpan="2" Margin="0,10,0,0">
+
+                                            <!-- VISUALIZAR -->
+                                            <Button
+                                                 Margin="5,10,5,0"
+                                                 Padding="10"
+                                                 Grid.Column="0"
+                                                 ImageSource="view_whte_50dp.svg"
+                                                 BackgroundColor="Purple"
+                                                 WidthRequest="30"
+                                                 HeightRequest="30"
+                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.VisualizarCommand}"
+                                                 CommandParameter="{Binding .}" />
+
+                                            <!-- EDITAR -->
+
+                                            <!-- Editar -->
+                                            <Button
+                                                 Margin="5,10,5,0"
+                                                Padding="10"
+                                                Grid.Column="1"
+                                                ImageSource="edit_white_50dp.svg"
+                                                BackgroundColor="Blue"
+                                                WidthRequest="32"
+                                                HeightRequest="32"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EditarMetaCommand}"
+                                                CommandParameter="{Binding .}" />
+
+                                            <!-- EXCLUIR -->
+                                            <Button
+                                                Margin="5,10,5,0"
+                                                Padding="10"
+                                                Grid.Column="2"
+                                                ImageSource="delete_white_50dp.svg"
+                                                BackgroundColor="red"
+                                                WidthRequest="32"
+                                                HeightRequest="32"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeletarMetaCommand}"
+                                                CommandParameter="{Binding .}" />
+
+                                        </Grid>
+
+                                    </Grid>
+                            </Border>
+
+                        </DataTemplate>
+
+                    </CollectionView.ItemTemplate>
+
+                </CollectionView>
+
+            </VerticalStackLayout>
+
+        </ScrollView>
+
+        <!-- BOTÃO INFERIOR -->
+        <Grid Grid.Row="1"
+              Padding="22,10,22,2"
+              BackgroundColor="#FAFAFA">
+
+            <Button Text="CRIAR META"
+                    HeightRequest="62"
+                    CornerRadius="28"
+                    FontSize="17"
+                    FontAttributes="Bold"
+                    BackgroundColor="#111111"
+                    TextColor="White"
+                    Command="{Binding CriarMetaRapidoCommand}"/>
+
+        </Grid>
+
+    </Grid>
+
+</ContentPage>

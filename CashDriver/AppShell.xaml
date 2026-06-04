@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="CashDriver.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:CashDriver"
+    xmlns:views="clr-namespace:CashDriver.Views"
+    Title="CashDriver">
+
+    <TabBar>
+
+        <ShellContent
+            Title="Jornada"
+            Route="Jornada"
+            ContentTemplate="{DataTemplate views:JornadaPage}" />
+
+        <!--
+        <ShellContent
+            Title="Iniciar"
+            Route="Iniciar"
+            ContentTemplate="{DataTemplate views:IniciarJornadaPage}" />
+        -->
+        <!--<ShellContent
+            Title="Metas"
+            Route="Metas"
+            ContentTemplate="{DataTemplate views:MetasListPage}" />-->
+
+        <!--<ShellContent
+            Title="Despesas"
+            Route="Despesas"
+            ContentTemplate="{DataTemplate views:DespesasListPage}" />-->
+
+        <ShellContent
+            Title="Jornadas"
+            Route="Jornadas"
+            ContentTemplate="{DataTemplate views:JornadasListPage}" />
+    </TabBar>
+
+</Shell>

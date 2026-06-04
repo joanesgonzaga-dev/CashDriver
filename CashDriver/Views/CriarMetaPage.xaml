@@ -1,0 +1,308 @@
+﻿<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:sys="clr-namespace:System;assembly=netstandard"
+    xmlns:enums="clr-namespace:CashDriver.Models.Enums"
+    xmlns:conv="clr-namespace:CashDriver.Converters"
+    x:Class="CashDriver.Views.CriarMetaPage"
+    Title="Voltar"
+    BackgroundColor="#FAFAFA"
+    Shell.NavBarIsVisible="True">
+
+    <ContentPage.Resources>
+
+        <ResourceDictionary>
+
+            <conv:EnumToBoolConverter x:Key="EnumToBoolConverter" />
+
+            <!-- CARD -->
+            <Style x:Key="CardStyle" TargetType="Border">
+                <Setter Property="BackgroundColor" Value="White"/>
+                <Setter Property="Stroke" Value="#ECECEC"/>
+                <Setter Property="StrokeThickness" Value="1"/>
+                <Setter Property="Padding" Value="20"/>
+                <Setter Property="Shadow">
+                    <Shadow Brush="#12000000"
+                            Offset="0,2"
+                            Radius="8"
+                            Opacity="0.08"/>
+                </Setter>
+                <Setter Property="StrokeShape">
+                    <RoundRectangle CornerRadius="20"/>
+                </Setter>
+            </Style>
+
+            <!-- LABELS -->
+            <Style x:Key="FieldLabelStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="TextColor" Value="#8E8E93"/>
+                <Setter Property="Margin" Value="2,0,0,6"/>
+            </Style>
+
+            <!-- ENTRIES -->
+            <Style x:Key="InputStyle" TargetType="Entry">
+                <Setter Property="BackgroundColor" Value="#F5F5F7"/>
+                <Setter Property="TextColor" Value="#111111"/>
+                <Setter Property="PlaceholderColor" Value="#A1A1AA"/>
+                <Setter Property="HeightRequest" Value="54"/>
+                <Setter Property="ClearButtonVisibility" Value="WhileEditing"/>
+                <Setter Property="Margin" Value="0,0,0,4"/>
+            </Style>
+
+        </ResourceDictionary>
+
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="*,Auto">
+
+        <!-- CONTEÚDO -->
+        <ScrollView Grid.Row="0">
+
+            <VerticalStackLayout Padding="22,60,22,120"
+                                 Spacing="18">
+
+                <!-- HEADER -->
+                <Grid ColumnDefinitions="*,Auto">
+
+                    <VerticalStackLayout Spacing="2">
+
+                        <Label Text="Nova Meta"
+                               FontSize="32"
+                               FontAttributes="Bold"
+                               TextColor="#111111"/>
+
+                        <Label Text="Crie objetivos financeiros personalizados"
+                               FontSize="14"
+                               TextColor="#8E8E93"/>
+
+                    </VerticalStackLayout>
+
+                    <Border
+                        WidthRequest="52"
+                        HeightRequest="52"
+                        BackgroundColor="#F2F2F7"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 18"
+                        VerticalOptions="Center">
+
+                        <Label Text="🎯"
+                               FontSize="24"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"/>
+
+                    </Border>
+
+                </Grid>
+
+                <!-- NOME -->
+                <Border Style="{StaticResource CardStyle}">
+
+                    <VerticalStackLayout>
+
+                        <Label Text="Nome da meta"
+                               Style="{StaticResource FieldLabelStyle}"/>
+
+                        <Border
+                            BackgroundColor="#F5F5F7"
+                            StrokeThickness="0"
+                            Padding="14,0"
+                            StrokeShape="RoundRectangle 16">
+
+                            <Entry Text="{Binding Nome}"
+                                   Placeholder="Ex: Reserva de emergência"
+                                   Style="{StaticResource InputStyle}"
+                                   BackgroundColor="Transparent"/>
+
+                        </Border>
+
+                    </VerticalStackLayout>
+
+                </Border>
+
+                <!-- FINALIZAÇÃO -->
+                <Border Style="{StaticResource CardStyle}">
+
+                    <VerticalStackLayout Spacing="18">
+
+                        <Label Text="Finalização automática"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               TextColor="#111111"/>
+
+                        <!-- RADIO 1 -->
+                        <Border
+                            BackgroundColor="#F7F7F8"
+                            StrokeThickness="0"
+                            Padding="14"
+                            StrokeShape="RoundRectangle 16">
+
+                            <RadioButton
+                                Content="Ao atingir o valor"
+                                GroupName="Finalizacao"
+                                TextColor="#111111"
+                                IsChecked="{Binding Tipo, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static enums:EnumTipoMeta.PorValor}}" />
+
+                        </Border>
+
+                        <!-- RADIO 2 -->
+                        <Border
+                            BackgroundColor="#F7F7F8"
+                            StrokeThickness="0"
+                            Padding="14"
+                            StrokeShape="RoundRectangle 16">
+
+                            <RadioButton
+                                Content="Em uma data específica"
+                                GroupName="Finalizacao"
+                                TextColor="#111111"
+                                IsChecked="{Binding Tipo, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static enums:EnumTipoMeta.PorPrazo}}" />
+
+                        </Border>
+
+                        <!-- DATA / HORA -->
+                        <VerticalStackLayout
+                            Spacing="14"
+                            IsVisible="{Binding ExibirDataHora}">
+
+                            <!-- DATEPICKER -->
+                            <VerticalStackLayout Spacing="6">
+
+                                <Label Text="Data final"
+                                       Style="{StaticResource FieldLabelStyle}"/>
+
+                                <Border
+                                    BackgroundColor="#F5F5F7"
+                                    StrokeThickness="0"
+                                    Padding="14,6"
+                                    StrokeShape="RoundRectangle 16">
+
+                                    <DatePicker
+                                        Date="{Binding DataFim}"
+                                        MinimumDate="{x:Static sys:DateTime.Today}"
+                                        TextColor="#111111"
+                                        BackgroundColor="Transparent"/>
+
+                                </Border>
+
+                            </VerticalStackLayout>
+
+                            <!-- TIMEPICKER -->
+                            <VerticalStackLayout Spacing="6">
+
+                                <Label Text="Horário"
+                                       Style="{StaticResource FieldLabelStyle}"/>
+
+                                <Border
+                                    BackgroundColor="#F5F5F7"
+                                    StrokeThickness="0"
+                                    Padding="14,6"
+                                    StrokeShape="RoundRectangle 16">
+
+                                    <TimePicker
+                                        Time="{Binding HoraFim}"
+                                        TextColor="#111111"
+                                        BackgroundColor="Transparent"/>
+
+                                </Border>
+
+                            </VerticalStackLayout>
+
+                        </VerticalStackLayout>
+
+                    </VerticalStackLayout>
+
+                </Border>
+
+                <!-- RECORRÊNCIA -->
+                <Border Style="{StaticResource CardStyle}">
+
+                    <Grid ColumnDefinitions="*,Auto"
+                          VerticalOptions="Center">
+
+                        <VerticalStackLayout Spacing="2">
+
+                            <Label Text="Reiniciar meta automaticamente"
+                                   FontSize="16"
+                                   FontAttributes="Bold"
+                                   TextColor="#111111"/>
+
+                            <Label Text="Ideal para metas diárias ou semanais"
+                                   FontSize="13"
+                                   TextColor="#8E8E93"/>
+
+                        </VerticalStackLayout>
+
+                        <CheckBox Grid.Column="1"
+                                  IsChecked="{Binding Recorrente}"
+                                  Color="#111111"
+                                  VerticalOptions="Center"/>
+
+                    </Grid>
+
+                </Border>
+
+                <!-- VALOR -->
+                <Border Style="{StaticResource CardStyle}">
+
+                    <VerticalStackLayout>
+
+                        <Label Text="Valor da meta"
+                               Style="{StaticResource FieldLabelStyle}"/>
+
+                        <Border
+                            BackgroundColor="#F5F5F7"
+                            StrokeThickness="0"
+                            Padding="14,0"
+                            StrokeShape="RoundRectangle 16">
+
+                            <Entry
+                                Text="{Binding ValorMeta, Mode=TwoWay}"
+                                Keyboard="Numeric"
+                                Placeholder="0,00"
+                                Style="{StaticResource InputStyle}"
+                                BackgroundColor="Transparent"/>
+
+                        </Border>
+
+                    </VerticalStackLayout>
+
+                </Border>
+
+            </VerticalStackLayout>
+
+        </ScrollView>
+
+        <!-- BOTÕES -->
+        <Grid Grid.Row="1"
+              Padding="22,10,22,2"
+              BackgroundColor="#FAFAFA"
+              ColumnDefinitions="*,*"
+              ColumnSpacing="12">
+
+            <!-- SALVAR -->
+            <Button Grid.Column="0"
+                    Text="SALVAR"
+                    HeightRequest="60"
+                    CornerRadius="28"
+                    FontSize="16"
+                    FontAttributes="Bold"
+                    BackgroundColor="#111111"
+                    TextColor="White"
+                    Command="{Binding SalvarCommand}"/>
+
+            <!-- CANCELAR -->
+            <Button Grid.Column="1"
+                    Text="ENCERRAR"
+                    HeightRequest="60"
+                    CornerRadius="28"
+                    FontSize="16"
+                    FontAttributes="Bold"
+                    BackgroundColor="#F2F2F7"
+                    TextColor="#111111"
+                    Command="{Binding CancelarCommand}"/>
+
+        </Grid>
+
+    </Grid>
+
+</ContentPage>
