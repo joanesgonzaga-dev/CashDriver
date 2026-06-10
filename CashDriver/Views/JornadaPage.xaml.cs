@@ -20,15 +20,17 @@ public partial class JornadaPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+
         if (BindingContext is JornadaViewModel vm)
         {
-            //if (!_initialized)
-            //{
-            //    await vm.RecuperarAsync();
-            //    _initialized = true;
-            //}
-            await vm.RecuperarAsync();
+            if (!_initialized)
+            {
+                await vm.RecuperarAsync();
+                _initialized = true;
+            }
+           // await vm.RecuperarAsync();
             vm.CarregarDadosJornada();
         }
+       
     }
 }

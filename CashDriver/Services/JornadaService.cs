@@ -1,14 +1,10 @@
 ﻿using CashDriver.Models;
 using CashDriver.Models.Enums;
+using System.Collections.ObjectModel;
+
 #if ANDROID
 using Java.Lang.Annotation;
 #endif
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CashDriver.Services
 {
@@ -17,38 +13,14 @@ namespace CashDriver.Services
         public Jornada? JornadaAtual { get; set; }
         public List<TipoDespesa> CadastroDeDespesas { get; set; } = new();
         public ObservableCollection<Meta> CadastroDeMetas { get; } = new();
-        public ObservableCollection<Plataforma> CadastroDePlataformas { get; } = new();
+        
+        public List<Plataforma> CadastroDePlataformas = new();
+        
         public PersistenceService _persistenceService;
 
         public JornadaService(PersistenceService persistenceService)
         {
             _persistenceService = persistenceService;
-
-            // Inicializa uma única vez
-
-            //Plataformas
-            //CadastroDePlataformas.Add(new Plataforma { Name = "Uber"});
-            //CadastroDePlataformas.Add(new Plataforma { Name = "99 pop" });
-            //CadastroDePlataformas.Add(new Plataforma { Name = "inDrive" });
-            //CadastroDePlataformas.Add(new Plataforma { Name = "Maxim" });
-            //CadastroDePlataformas.Add(new Plataforma { Name = "V1" });
-            //CadastroDePlataformas.Add(new Plataforma { Name = "XCarro" });
-            
-            //Metas
-            //CadastroDeMetas.Add(new Meta { Nome = "Aluguel", ValorMeta = 2287, ValorAtual = 1200 });
-            //CadastroDeMetas.Add(new Meta { Nome = "Meta diária", ValorMeta = 200, ValorAtual = 75.80M });
-            //CadastroDeMetas.Add(new Meta { Nome = "Combustível", ValorMeta = 100, ValorAtual = 60 });
-
-            //Despesas
-            /*
-            CadastroDeDespesas.Add(new TipoDespesa { DescricaoTipo = "Combustível", Tipo = EnumTipoDespesa.Combustivel, NomeIcone = string.Empty });
-            CadastroDeDespesas.Add(new TipoDespesa { DescricaoTipo = "Alimentação", Tipo = EnumTipoDespesa.Alimentacao, NomeIcone = string.Empty });
-            CadastroDeDespesas.Add(new TipoDespesa { DescricaoTipo = "Manutenção", Tipo = EnumTipoDespesa.Manutencao, NomeIcone = string.Empty });
-            CadastroDeDespesas.Add(new TipoDespesa { DescricaoTipo = "Limpeza/Higienização" , Tipo = EnumTipoDespesa.Limpeza, NomeIcone = string.Empty });
-            CadastroDeDespesas.Add(new TipoDespesa { DescricaoTipo = "Diversos" , Tipo = EnumTipoDespesa.Diversos, NomeIcone = string.Empty });
-            */
-
-            
         }
 
         public async Task CriarJornadaAsync()    
@@ -98,6 +70,7 @@ namespace CashDriver.Services
         public async Task RecuperarJornadaAtivaAsync()
         {
             await CarregaCadastroDeDespesas();
+            await CarregaCadastroDePlataformas();
             JornadaAtual = await _persistenceService.ObterJornadaAtivaAsync();
         }
 
@@ -107,42 +80,32 @@ namespace CashDriver.Services
             CadastroDeDespesas = await _persistenceService.ObterTiposDespesaAsync();
         }
 
-        private async Task CarregaCadastroDePlataformas()
+        public async Task CarregaCadastroDePlataformas()
         {
             CadastroDePlataformas.Clear();
-            CadastroDePlataformas = await _persistenceService.ObterTiposDespesaAsync();
+            CadastroDePlataformas = await _persistenceService.ObterPlataformasAsync();
         }
 
         public async Task RemoverDespesaAsync(Guid despesaId)
         {
-            try
+            var despesa = JornadaAtual.Despesas.FirstOrDefault(x => x.Id == despesaId);
+            if (despesa == null)
             {
-                var despesa = JornadaAtual.Despesas.FirstOrDefault(x => x.Id == despesaId);
-
-                if (despesa == null)
-                {
-                    return;
-                }
-                JornadaAtual.Despesas.Remove(despesa);
-                await _persistenceService.RemoverDespesa(despesa);
+                return;
             }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            await _persistenceService.RemoverDespesa(despesa);
+            JornadaAtual.Despesas.Remove(despesa);
         }
 
-        public async Task RemoverGanhoAsync(Guid lancamentoId)
+        public async Task RemoverGanhoAsync(Guid ganhoId)
         {
-            var ganho = JornadaAtual?.Ganhos.First(g => g.Id == lancamentoId);
-
+            var ganho = JornadaAtual?.Ganhos.First(g => g.Id == ganhoId);
             if (ganho == null)
             {
                 return;
             }
-
-            JornadaAtual?.Ganhos.Remove(ganho);
             await _persistenceService.RemoverGanho(ganho);
+            JornadaAtual?.Ganhos.Remove(ganho);
         }
 
         public async Task LancarDespesaAsync(Despesa despesa)
@@ -172,7 +135,6 @@ namespace CashDriver.Services
                 }
 
                 await _persistenceService.AdicionarGanhoAsync(ganho);
-                JornadaAtual?.Ganhos.Add(ganho);
             }
             catch (Exception)
             {

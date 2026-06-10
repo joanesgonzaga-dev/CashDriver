@@ -44,7 +44,7 @@ namespace CashDriver.Data
                .HasOne(d => d.Tipo)
                .WithMany()
                .HasForeignKey(t => t.TipoDespesaId)
-               .OnDelete(DeleteBehavior.Restrict);
+               .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

@@ -79,7 +79,6 @@ namespace CashDriver.ViewModels
             };
 
             await _jornadaService?.LancarDespesaAsync(despesa);
-            despesa.Tipo = TipoDespesaSelecionada;
             WeakReferenceMessenger.Default.Send(new DespesaLancadaMessage(despesa));
             _fechar.Invoke();
         }

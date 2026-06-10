@@ -34,13 +34,15 @@ namespace CashDriver
             builder.Services.AddDbContext<AppDbContext>(options =>
             {
                 options.UseSqlite($"Filename={DatabaseConstants.DatabasePath}");
+
+                # if DEBUG
+                    options.EnableSensitiveDataLogging();
+                #endif
             });
 
             builder.Services.AddSingleton<JornadaService>();
             builder.Services.AddTransient<JornadaViewModel>();
             builder.Services.AddTransient<JornadaPage>();
-            //builder.Services.AddTransient<IniciarJornadaViewModel>();
-            //builder.Services.AddTransient<IniciarJornadaPage>();
             
             builder.Services.AddTransient<CriarMetaViewModel>();
             builder.Services.AddTransient<CriarMetaPage>();

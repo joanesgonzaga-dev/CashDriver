@@ -43,9 +43,11 @@ namespace CashDriver.Services
             {
                 var jornada = await _dbContext
                     .Jornadas
+                    //.AsNoTracking()
                     .Include(j => j.Ganhos)
                     .Include(j => j.Despesas)
                     .ThenInclude(d => d.Tipo)
+
                     .FirstOrDefaultAsync(x => (x.Status == Models.Enums.EnumStatusJornada.Ativa || x.Status == Models.Enums.EnumStatusJornada.Pausa));
 
                 return jornada;
@@ -76,6 +78,7 @@ namespace CashDriver.Services
                     await _dbContext.AddRangeAsync(plataformas);
                     await _dbContext.SaveChangesAsync();
                 }
+
             }
             catch (Exception)
             {
@@ -153,16 +156,28 @@ namespace CashDriver.Services
 
         public async Task<List<Jornada>> ObterJornadasAsync()
         {
-            return await _dbContext.Jornadas.OrderByDescending(j => j.Inicio).ToListAsync();
+            return await _dbContext.Jornadas.AsNoTracking().OrderByDescending(j => j.Inicio).ToListAsync();
         }
+
+        public async Task<List<Plataforma>> ObterPlataformasAsync()
+        {
+            try
+            {
+                await SeedPlataformasAsync();
+                return await _dbContext.Plataformas.AsNoTracking().ToListAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }   
 
         public async Task<List<TipoDespesa>> ObterTiposDespesaAsync()
         {
             try
             {
                 await SeedTiposDespesaAsync();
-                await SeedPlataformasAsync();
-                return await _dbContext.TiposDespesa.ToListAsync();
+                return await _dbContext.TiposDespesa.AsNoTracking().ToListAsync();
             }
             catch (Exception)
             {
@@ -186,28 +201,14 @@ namespace CashDriver.Services
 
         public async Task AdicionarDespesaAsync(Despesa despesa)
         {
-            try
-            {
-                await _dbContext.Despesas.AddAsync(despesa);
-                await _dbContext.SaveChangesAsync();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            await _dbContext.Despesas.AddAsync(despesa);
+            await _dbContext.SaveChangesAsync();   
         }
 
         public async Task RemoverDespesa(Despesa despesa)
         {
-            try
-            {
-                _dbContext.Despesas.Remove(despesa);
-                await _dbContext.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            _dbContext.Despesas.Remove(despesa);
+            await _dbContext.SaveChangesAsync();
         }
 
         public async Task RemoverGanho(Ganho ganho)

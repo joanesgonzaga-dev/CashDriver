@@ -34,7 +34,7 @@ namespace CashDriver.ViewModels
         {
             _jornadaService = jornadaService;
             _fechar = fechar;
-            CarregarPlataformas();
+           CarregarPlataformas();
         }
 
         public void CarregarPlataformas()
@@ -73,7 +73,6 @@ namespace CashDriver.ViewModels
 
             await _jornadaService.LancarGanhoAsync(ganho);
             WeakReferenceMessenger.Default.Send(new GanhoLancadoMessage(ganho));
-
             _fechar.Invoke();
         }
     }

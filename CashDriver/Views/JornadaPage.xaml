@@ -21,12 +21,12 @@
                 <Setter Property="Stroke" Value="#ECECEC"/>
                 <Setter Property="StrokeThickness" Value="1"/>
                 <Setter Property="Padding" Value="0"/>
+                <!--
+                Esse miserável quebra a aplicação no Windows
                 <Setter Property="Shadow">
-                    <Shadow Brush="#12000000"
-                            Offset="0,2"
-                            Radius="8"
-                            Opacity="0.08"/>
+                    <Shadow Brush="#12000000" Offset="0,2" Radius="8" Opacity="0.08"/>
                 </Setter>
+                -->
                 <Setter Property="StrokeShape">
                     <RoundRectangle CornerRadius="10"/>
                 </Setter>
@@ -461,82 +461,79 @@
                 </Border>
 
                 <!-- EXTRATO -->
-                <VerticalStackLayout
-                    IsVisible="{Binding TemLancamentos}">
+                <VerticalStackLayout>
 
-                    <Label Text="Extrato"
-                           Style="{StaticResource SectionTitleStyle}" Margin="5, 2"/>
+                    <Label Text="Extrato" Style="{StaticResource SectionTitleStyle}" IsVisible="{Binding TemLancamentos}" Margin="5, 2"/>
 
-                    <CollectionView ItemsSource="{Binding Extrato}">
+                    <CollectionView ItemsSource="{Binding Extrato}" IsVisible="{Binding TemLancamentos}">
 
                         <CollectionView.ItemTemplate>
 
                             <DataTemplate>
 
                                 <Border Style="{StaticResource CardStyle}"
-                                        Margin="3,3">
-                                    
+        Margin="3,3">
+
                                     <!-- DEFINE BACKGROUND DO BORDER-->
-                                    
+
                                     <!-- GANHO -->
                                     <Border.Triggers>
                                         <DataTrigger
-                                            TargetType="Border"
-                                            Binding="{Binding Tipo}"
-                                            Value="Ganho">
+            TargetType="Border"
+            Binding="{Binding Tipo}"
+            Value="Ganho">
                                             <Setter Property="BackgroundColor" Value="#2622A06B">
                                             </Setter>
                                         </DataTrigger>
 
                                         <!-- DESPESA -->
                                         <DataTrigger
-                                            TargetType="Border"
-                                            Binding="{Binding Tipo}"
-                                            Value="Despesa">                    
+            TargetType="Border"
+            Binding="{Binding Tipo}"
+            Value="Despesa">
                                             <Setter Property="BackgroundColor" Value="#40E74C3C">
                                             </Setter>
                                         </DataTrigger>
                                     </Border.Triggers>
-                                   
+
                                     <Grid ColumnDefinitions="Auto,*,Auto" Padding="10">
 
                                         <!-- ÍCONE -->
                                         <!-- Excluir -->
                                         <Button
-                                            Margin="3"
-                                            Padding="8"
-                                            Grid.Column="0"
-                                            ImageSource="delete_white_50dp.svg"
-                                            BackgroundColor="red"
-                                            WidthRequest="30"
-                                            HeightRequest="30"
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeletarLancamentoExtratoCommand}"
-                                            CommandParameter="{Binding .}" />
+            Margin="3"
+            Padding="8"
+            Grid.Column="0"
+            ImageSource="delete_white_50dp.svg"
+            BackgroundColor="red"
+            WidthRequest="30"
+            HeightRequest="30"
+            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeletarLancamentoExtratoCommand}"
+            CommandParameter="{Binding .}" />
 
                                         <!-- TEXTO -->
                                         <VerticalStackLayout Grid.Column="1"
-                                                             Margin="14,0"
-                                                             Spacing="2">
+                             Margin="14,0"
+                             Spacing="2">
 
                                             <Label Text="{Binding Descricao}"
-                                                   FontSize="16"
-                                                   FontFamily="Inter18ptBold"
-                                                   TextColor="#111111"/>
+                   FontSize="16"
+                   FontFamily="Inter18ptBold"
+                   TextColor="#111111"/>
 
                                             <Label Text="{Binding Tipo}"
-                                                   FontSize="14"
-                                                   FontFamily="Inter18ptSemiBold"
-                                                   TextColor="#8E8E93"/>
+                   FontSize="14"
+                   FontFamily="Inter18ptSemiBold"
+                   TextColor="#8E8E93"/>
                                         </VerticalStackLayout>
 
                                         <!-- VALOR -->
                                         <Label Grid.Column="2"
-                                               Text="{Binding ValorTexto}"
-                                               FontSize="16"
-                                               FontFamily="Inter18ptBold"
-                                               TextColor="{Binding ValorColor}"
-                                               VerticalOptions="Center"/>
-
+               Text="{Binding ValorTexto}"
+               FontSize="16"
+               FontFamily="Inter18ptBold"
+               TextColor="{Binding ValorColor}"
+               VerticalOptions="Center"/>
                                     </Grid>
 
                                 </Border>
@@ -551,7 +548,7 @@
 
                 <!-- METAS -->
                 <VerticalStackLayout
-                    IsVisible="{Binding TemMetas}">
+                   >
 
                     <Label Text="Metas"
                            Style="{StaticResource SectionTitleStyle}" Margin="5, 2"/>
@@ -567,7 +564,7 @@
 
                                     <VerticalStackLayout Spacing="16">
 
-                                        <!-- HEADER -->
+                                        <!-- HEADER --> 
                                         <Grid ColumnDefinitions="*,Auto" Margin="15,4">
 
                                             <VerticalStackLayout Spacing="2">
@@ -583,7 +580,7 @@
                                                        TextColor="#8E8E93"/>
 
                                             </VerticalStackLayout>
-                                            <!-- 
+                                             
                                             <Border
                                                 WidthRequest="46"
                                                 HeightRequest="46"
@@ -597,10 +594,10 @@
                                                        HorizontalOptions="Center"
                                                        VerticalOptions="Center"/>
                                             </Border>
-                                            -->
+                                            
                                         </Grid>
 
-                                        <!-- BARRA -->
+                                        <!-- BARRA --> 
                                         <ProgressBar Progress="{Binding Progresso}"
                                                      Margin="15,0"
                                                      HeightRequest="6"

@@ -14,6 +14,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 
 namespace CashDriver.ViewModels
@@ -21,38 +22,21 @@ namespace CashDriver.ViewModels
     public partial class JornadaViewModel : ObservableObject
     {
         private readonly JornadaService _jornadaService;
-       
-        [ObservableProperty]
-        private Jornada? jornadaAtual;
-
-        public bool Ativa => JornadaAtual != null && (JornadaAtual?.Status == EnumStatusJornada.Ativa);
-
-        public bool Pausada => JornadaAtual != null && (JornadaAtual?.Status ==  EnumStatusJornada.Pausa);
-        public bool Inativa => JornadaAtual == null || JornadaAtual?.Status == EnumStatusJornada.Encerrada;
-
+        public bool Ativa => _jornadaService.JornadaAtual != null && (_jornadaService.JornadaAtual?.Status == EnumStatusJornada.Ativa);
+        public bool Pausada => _jornadaService.JornadaAtual != null && (_jornadaService.JornadaAtual?.Status ==  EnumStatusJornada.Pausa);
+        public bool Inativa => _jornadaService.JornadaAtual == null || _jornadaService.JornadaAtual?.Status == EnumStatusJornada.Encerrada;
         private System.Timers.Timer _timer;
-
         public decimal TotalGanhos => _jornadaService.JornadaAtual is null?  0 : _jornadaService.JornadaAtual.TotalGanhos;// ?.Ganhos?.Sum(g => g.Valor) ?? 0M;
-
         public decimal TotalDespesas => _jornadaService.JornadaAtual is null ? 0 : _jornadaService.JornadaAtual.TotalDespesas;// .Despesas?.Sum(d => d.Valor) ?? 0M;
-
         public decimal Lucro => TotalGanhos - TotalDespesas;
-
         [ObservableProperty]
         private ObservableCollection<Meta> metas = new();
-
         public ObservableCollection<ExtratoItem> Extrato { get; } = new();
-
-        public bool TemLancamentos => Extrato?.Any() == true;
-
         public string HoraInicio => "Iniciada às " + _jornadaService?.JornadaAtual?.Inicio.ToShortTimeString();
-
-        public bool TemMetas => Metas?.Any() == true;
-
+        public bool TemLancamentos =>  Extrato.Any() == true;
         public JornadaViewModel(JornadaService jornadaService)
         {
             _jornadaService = jornadaService;
-            JornadaAtual = _jornadaService.JornadaAtual;
 
             #region contabiliza e atualiza tempo na tela
             _timer = new System.Timers.Timer(1000);
@@ -67,7 +51,6 @@ namespace CashDriver.ViewModels
             _timer.Start();
             #endregion
 
-
             #region registro de eventos
             // Notifica a UI que TemLancamentos mudou sempre que a coleção Extrato for alterada
             // (Add, Remove, Clear, etc. disparam CollectionChanged)
@@ -79,52 +62,33 @@ namespace CashDriver.ViewModels
             // a atualização de TemLancamentos não precisa ser chamada manualmente em vários pontos do código
             Extrato.CollectionChanged += (s, e) =>
             {
-                OnPropertyChanged(nameof(TemLancamentos));
+                NotificaUI();
+                //OnPropertyChanged(nameof(TemLancamentos));
             };
 
-            
-            Metas.CollectionChanged += (s, e) =>
-            {
-                OnPropertyChanged(nameof(TemMetas));
-            };
+
+            //Metas.CollectionChanged += (s, e) =>
+            //{
+            //    OnPropertyChanged(nameof(TemMetas));
+            //};
 
 
             if (!WeakReferenceMessenger.Default.IsRegistered<GanhoLancadoMessage>(this))
             {
                 WeakReferenceMessenger.Default.Register<GanhoLancadoMessage>(this, (r,m)=> {
-                    AdicionarGanhoAoExtrato(m.Ganho);
+                    MontarExtrato();
                 });
             }
 
             if (!WeakReferenceMessenger.Default.IsRegistered<DespesaLancadaMessage>(this))
             {
                 WeakReferenceMessenger.Default.Register<DespesaLancadaMessage>(this, (r, m) => {
-                    AdicionarDespesaAoExtrato(m.Despesa);
+                    MontarExtrato();
                 });
             }
 
             #endregion
         }
-
-        partial void OnJornadaAtualChanged(Jornada? value)
-        {
-            if (value is not null)
-            {
-                value.PropertyChanged += JornadaAtual_PropertyChanged;
-            }
-
-            NotificaUI();
-        }
-
-        private void JornadaAtual_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(Jornada.Status))
-            {
-                NotificaUI();
-                // ou qualquer outra propriedade dependente
-            }
-        }
-
 
         [RelayCommand]
         private async Task AdicionarDespesa()
@@ -146,36 +110,11 @@ namespace CashDriver.ViewModels
             await Shell.Current.CurrentPage.ShowPopupAsync(popup);
         }
 
-        private void AdicionarDespesaAoExtrato(Despesa despesa)
-        {
-            //O callback do Messenger parecia estar executando fora da thread principal da UI.
-            //Então forcei a execução na Thread principal
-            MainThread.BeginInvokeOnMainThread(()=>
-            {
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    Extrato.Insert(0, new ExtratoItem
-                    {
-                        Id = Guid.NewGuid(),
-                        LancamentoId = despesa.Id,
-                        Tipo = Models.Enums.EnumTipoExtrato.Despesa,
-                        Descricao = despesa?.Tipo?.DescricaoTipo,
-                        Valor = despesa.Valor,
-                        ValorTexto = $"- {despesa.Valor.ToString("C", new CultureInfo("pt-BR"))}",
-                        ValorColor = Color.FromArgb("#FF4500"),
-                        Data = despesa.CreatedAt
-                    });
-
-                    NotificaUI();
-                });
-            });
-        }
-
         [RelayCommand]
         private async Task AdicionarGanho()
         {
 
-            if (_jornadaService.JornadaAtual.Status != EnumStatusJornada.Ativa)
+            if (_jornadaService.JornadaAtual == null || _jornadaService.JornadaAtual.Status != EnumStatusJornada.Ativa)
             {
                 await Shell.Current.DisplayAlert("Alerta!", "Não existe jornada Ativa para lançar ganhos!", "OK");
                 return;
@@ -189,27 +128,6 @@ namespace CashDriver.ViewModels
             popup = new LancarGanhoPopup(vm);
 
             await Shell.Current.CurrentPage.ShowPopupAsync(popup);
-        }
-        private void AdicionarGanhoAoExtrato(Ganho ganho)
-        {
-            //O callback do Messenger parecia estar executando fora da thread principal da UI.
-            //Então forcei a execução na Thread principal
-            MainThread.BeginInvokeOnMainThread(()=>
-            {
-                Extrato.Insert(0, new ExtratoItem
-                {
-                    Id = Guid.NewGuid(),
-                    LancamentoId = ganho.Id,
-                    Tipo = Models.Enums.EnumTipoExtrato.Ganho,
-                    Descricao = ganho.PlataformaNome,
-                    Valor = ganho.Valor,
-                    ValorTexto = $"+ {ganho.Valor.ToString("C", new CultureInfo("pt-BR"))}",
-                    ValorColor = Color.FromArgb("#19C37D"),
-                    Data = ganho.CreatedAt
-                });
-
-                NotificaUI();
-            });
         }
 
         [RelayCommand]
@@ -226,8 +144,8 @@ namespace CashDriver.ViewModels
 
                 //Persistir neste momento
                 await _jornadaService.EncerrarJornadaAsync();
-                JornadaAtual = null;
-                NotificaUI();
+                _jornadaService.JornadaAtual = null;
+                //NotificaUI();
                 MontarExtrato();
                 CarregarMetas();
             }
@@ -255,12 +173,12 @@ namespace CashDriver.ViewModels
             else
             {
                 _jornadaService?.CriarJornadaAsync();
-                JornadaAtual = _jornadaService?.JornadaAtual;
             }
 
             //navegar
             await Shell.Current.GoToAsync("//Jornada"); // //Page só funciona se os ShellContent em AppShell.xaml tiverem o atributo Route="SuaPage"
             CarregarDadosJornada();
+
         }
 
         public string DuracaoFormatada
@@ -277,120 +195,94 @@ namespace CashDriver.ViewModels
 
         public void CarregarDadosJornada()
         {
-            JornadaAtual = _jornadaService.JornadaAtual;
-
-            if (JornadaAtual != null)
+            if (_jornadaService.JornadaAtual != null)
             {
-                //TotalGanhos = JornadaAtual.TotalGanhos;
-                //ESSA LINHA É A CHAVE
-                //OnPropertyChanged(nameof(Metas));
-                NotificaUI();
                 MontarExtrato();
-                CarregarMetas();
-            }
+            } 
         }
 
         private void MontarExtrato()
         {
-            try
+            Extrato.Clear();
+
+            ////Ganhos
+            foreach (var ganho in _jornadaService.JornadaAtual?.Ganhos ?? Enumerable.Empty<Ganho>())
             {
-                Extrato.Clear();
-
-                ////Ganhos
-                foreach (var ganho in _jornadaService.JornadaAtual?.Ganhos ?? Enumerable.Empty<Ganho>())
+                var item = new ExtratoItem
                 {
-                    var item = new ExtratoItem
-                    {
-                        Id = Guid.NewGuid(),
-                        LancamentoId = ganho.Id,
-                        Tipo = Models.Enums.EnumTipoExtrato.Ganho,
-                        Descricao = ganho.PlataformaNome,
-                        Valor = ganho.Valor,
-                        ValorTexto = $"+ {ganho.Valor.ToString("c", new CultureInfo("pt-br"))}",
-                        ValorColor = Color.FromArgb("#19c37d"),
-                        Data = ganho.CreatedAt
-                    };
+                    Id = Guid.NewGuid(),
+                    LancamentoId = ganho.Id,
+                    Tipo = Models.Enums.EnumTipoExtrato.Ganho,
+                    Descricao = ganho.PlataformaNome,
+                    Valor = ganho.Valor,
+                    ValorTexto = $"+ {ganho.Valor.ToString("c", new CultureInfo("pt-br"))}",
+                    ValorColor = Color.FromArgb("#19c37d"),
+                    Data = ganho.CreatedAt
+                };
 
-                    var index = Extrato.TakeWhile(x => x.Data > ganho.CreatedAt).Count();
-                    Extrato.Insert(index, item);
-                }
-
-                //Despesas
-                foreach (var despesa in _jornadaService?.JornadaAtual?.Despesas ?? Enumerable.Empty<Despesa>())
-                {
-                    var tipo = _jornadaService?.CadastroDeDespesas.FirstOrDefault(t => t.Id == despesa.TipoDespesaId);
-                    var item = new ExtratoItem()
-                    {
-                        Id = Guid.NewGuid(),
-                        LancamentoId = despesa.Id,
-                        Tipo = Models.Enums.EnumTipoExtrato.Despesa,
-                        Descricao = tipo.DescricaoTipo,//despesa.Tipo?.DescricaoTipo ?? string.Empty; //tá disparando exception
-                        Valor = despesa.Valor,
-                        ValorTexto = $"- {despesa.Valor.ToString("C", new CultureInfo("pt-BR"))}",
-                        ValorColor = Color.FromArgb("#FF4500"),
-                        Data = despesa.CreatedAt
-                    };
-
-                    var index = Extrato.TakeWhile(x => x.Data > despesa.CreatedAt).Count();
-                    Extrato.Insert(index, item);
-                }
-
-                NotificaUI();
+                var index = Extrato.TakeWhile(x => x.Data > ganho.CreatedAt).Count();
+                Extrato.Insert(index, item);
             }
 
-            catch (Exception ex)
+            //Despesas
+            foreach (var despesa in _jornadaService?.JornadaAtual?.Despesas ?? Enumerable.Empty<Despesa>())
             {
-                throw;
+                var tipo = _jornadaService?.CadastroDeDespesas.FirstOrDefault(t => t.Id == despesa.TipoDespesaId);
+                var item = new ExtratoItem()
+                {
+                    Id = Guid.NewGuid(),
+                    LancamentoId = despesa.Id,
+                    Tipo = Models.Enums.EnumTipoExtrato.Despesa,
+                    Descricao = tipo.DescricaoTipo,//despesa.Tipo?.DescricaoTipo ?? string.Empty; //tá disparando exception
+                    Valor = despesa.Valor,
+                    ValorTexto = $"- {despesa.Valor.ToString("C", new CultureInfo("pt-BR"))}",
+                    ValorColor = Color.FromArgb("#FF4500"),
+                    Data = despesa.CreatedAt
+                };
+
+                var index = Extrato.TakeWhile(x => x.Data > despesa.CreatedAt).Count();
+                Extrato.Insert(index, item);
             }
         }
 
         public void CarregarMetas()
         {
-            Metas.Clear();
-            foreach (var meta in _jornadaService.JornadaAtual?.Metas.Where(m => m.Selecionada) ?? Enumerable.Empty<Meta>())
-            {
-                Metas.Add(meta);
-            }
-        }
-
-        [RelayCommand]
-        public async Task Mostrar()
-        {
-            await Application.Current.MainPage.DisplayAlert("OK", $"{Ativa}", "OK");
+            //Metas.Clear();
+            //foreach (var meta in _jornadaService.JornadaAtual?.Metas.Where(m => m.Selecionada) ?? Enumerable.Empty<Meta>())
+            //{
+            //    Metas.Add(meta);
+            //}
         }
 
         [RelayCommand]
         public async Task DeletarLancamentoExtrato(ExtratoItem item)
         {
-            try
+            var result = await Application.Current.MainPage.DisplayAlert(
+            "Exxcluir",
+            "Confirma a exclusão do lançamento?",
+            "SIM",
+            "NÃO");
+
+            if (!result)
             {
-                var result = await Application.Current.MainPage.DisplayAlert(
-                "Exxcluir",
-                "Confirma a exclusão do lançamento?",
-                "SIM",
-                "NÃO");
-
-                if (!result)
-                {
-                    return;
-                }
-
-                if (item.Tipo == EnumTipoExtrato.Ganho)
-                {
-                    await _jornadaService.RemoverGanhoAsync(item.LancamentoId);
-                }
-
-                else if (item.Tipo == EnumTipoExtrato.Despesa)
-                {
-                    await _jornadaService.RemoverDespesaAsync(item.Id);
-                }
-
-                Extrato.Remove(item);
-                NotificaUI();
+                return;
             }
-            catch (Exception ex)
+
+            //Não confundir com item.Id, que é o Id do ExtratoItem (apenas para controle da UI), o item.LancamentoId é o Id do ganho ou despesa na jornada
+            if (item.Tipo == EnumTipoExtrato.Ganho)
             {
-                throw ex;
+                await _jornadaService.RemoverGanhoAsync(item.LancamentoId);
+            }
+
+            else if (item.Tipo == EnumTipoExtrato.Despesa)
+            {
+                await _jornadaService.RemoverDespesaAsync(item.LancamentoId);
+            }
+
+            var itemToRemove = Extrato.FirstOrDefault(i => i.LancamentoId == item.LancamentoId);
+            if (itemToRemove != null)
+            {
+                Extrato.Remove(itemToRemove);
             }
         }
 
@@ -413,21 +305,14 @@ namespace CashDriver.ViewModels
         [RelayCommand]
         private async Task RetomarJornada()
         {
-            try
-            {
-                await _jornadaService.RetomarJornadaPausadaAsync();
-                await RecuperarAsync();
-                NotificaUI();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            await _jornadaService.RetomarJornadaPausadaAsync();
+            await RecuperarAsync();
+            NotificaUI();
         }
 
         private void NotificaUI()
         {
-            OnPropertyChanged(DuracaoFormatada);
+            OnPropertyChanged(nameof(DuracaoFormatada));
             OnPropertyChanged(nameof(Ativa));
             OnPropertyChanged(nameof(Inativa));
             OnPropertyChanged(nameof(Pausada));
@@ -435,6 +320,7 @@ namespace CashDriver.ViewModels
             OnPropertyChanged(nameof(TotalDespesas));
             OnPropertyChanged(nameof(Lucro));
             OnPropertyChanged(nameof(HoraInicio));
+            OnPropertyChanged(nameof(TemLancamentos));
         }
     }
 }
