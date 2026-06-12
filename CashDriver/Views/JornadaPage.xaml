@@ -47,7 +47,7 @@
 
         <!-- HEADER -->
         <Grid Grid.Row="0" ColumnDefinitions="Auto,*" BackgroundColor="#071B34" >
-            <VerticalStackLayout Padding="10,0,0,15">
+            <VerticalStackLayout Padding="15,0,0,15">
 
                 <Label Text="Jornada atual" FontSize="25" TextColor="WhiteSmoke" FontFamily="Inter18ptBold"/>
                 <Label Text="Acompanhe seus resultados em tempo real" FontSize="12" TextColor="#F5F7FA" FontFamily="Inter18ptRegular"/>
@@ -76,17 +76,17 @@
         <!-- CONTEÚDO -->
         <ScrollView Grid.Row="1">
 
-            <VerticalStackLayout Padding="10,20,10,120" Spacing="10">
+            <VerticalStackLayout Padding="15,10,15,5" Spacing="10">
                 
                 <!-- CARD RESUMOS -->
                 <Border Style="{StaticResource CardStyle}">
                     <Grid RowDefinitions="Auto" >
-                        
-                        <Grid Grid.Row="0" ColumnDefinitions="70,Auto,*" >
+
+                        <Grid Grid.Row="0" ColumnDefinitions="Auto,Auto,*" >
                             <Border
                                 Grid.Row="0"
                                 Grid.Column="0"
-                                Padding="15"
+                                Padding="0"
                                 WidthRequest="50"
                                 HeightRequest="50"
                                 BackgroundColor="#DDF5EA"
@@ -195,87 +195,6 @@
                             </Border>
 
                         </Grid>
-
-                        <!--<Grid Grid.Row="1">
-                            <Grid Padding="8,0,10,8">
-                                <Border HeightRequest="75" BackgroundColor="#063532" StrokeThickness="0" StrokeShape="15">
-                                    <Grid ColumnDefinitions="Auto,Auto,auto">
-                                        <Grid Grid.Column="0" ColumnDefinitions="*,*" Padding="10,0,0,0" VerticalOptions="Center">
-                                            <Border
-                                                HorizontalOptions="End"
-                                                Grid.Column="0"
-                                                WidthRequest="32"
-                                                HeightRequest="32"
-                                                BackgroundColor="#2622A06B"
-                                                StrokeThickness="0"
-                                                StrokeShape="RoundRectangle 10"
-                                                >
-
-                                                <Image
-                                                    WidthRequest="19"
-                                                    HeightRequest="19"
-                                                    VerticalOptions="Center"
-                                                    Source="money_green_60dp.png" />
-
-                                            </Border>
-                                            <VerticalStackLayout Grid.Column="1">
-                                                <Label Text="GANHOS" FontSize="10" FontFamily="Inter18ptBold" Margin="10,0,0,0"  TextColor="#8E8E93"/>
-                                                <Label Text="R$ 699,54" FontSize="11" FontFamily="Inter18ptSemiBold" Margin="10,0,0,0"  TextColor="#19C37D"/>
-                                            </VerticalStackLayout>
-
-                                        </Grid>
-
-                                        <Grid Grid.Column="1" ColumnDefinitions="*,*" Padding="10,0,0,0" VerticalOptions="Center">
-                                            <Border
-                                                HorizontalOptions="End"
-                                                Grid.Column="0"
-                                                WidthRequest="32"
-                                                HeightRequest="32"
-                                                BackgroundColor="#40E74C3C"
-                                                StrokeThickness="0"
-                                                StrokeShape="RoundRectangle 10"
-                                                >
-
-                                                <Image
-                                                    WidthRequest="19"
-                                                    HeightRequest="19"
-                                                    VerticalOptions="Center"
-                                                    Source="money_red_60dp.png" />
-                                            </Border>
-                                            <VerticalStackLayout Grid.Column="1">
-                                                <Label Text="DESPESAS" FontSize="10" FontFamily="Inter18ptBold" Margin="10,0,0,0"  TextColor="#8E8E93"/>
-                                                <Label Text="R$ 185,60" FontSize="11" FontFamily="Inter18ptBold" Margin="10,0,0,0"  TextColor="OrangeRed"/>
-                                            </VerticalStackLayout>
-                                        </Grid>
-
-                                        <Grid Grid.Column="2" ColumnDefinitions="*,*" Padding="10,0,0,0" VerticalOptions="Center">
-                                            <Border
-                                                HorizontalOptions="End"
-                                                Grid.Column="0"
-                                                WidthRequest="32"
-                                                HeightRequest="32"
-                                                BackgroundColor="#163B63"
-                                                StrokeThickness="0"
-                                                StrokeShape="RoundRectangle 10"
-                                                >
-
-                                                <Image
-                                                    WidthRequest="19"
-                                                    HeightRequest="19"
-                                                    VerticalOptions="Center"
-                                                    Source="moneybag_blue_60dp.png" />
-                                                
-                                            </Border>
-                                            <VerticalStackLayout Grid.Column="1">
-                                                <Label Text="LUCRO" FontSize="10" FontFamily="Inter18ptBold" Margin="10,0,0,0"  TextColor="#8E8E93"/>
-                                                <Label Text="R$ 513,94" FontSize="11" FontFamily="Inter18ptSemiBold" Margin="10,0,0,0"  TextColor="#F5F7FA" />
-                                            </VerticalStackLayout>
-
-                                        </Grid>
-                                    </Grid>
-                                </Border>
-                            </Grid>
-                        </Grid>-->
                     </Grid>
                    
                 </Border>

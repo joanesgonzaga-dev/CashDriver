@@ -64,7 +64,7 @@
                 BackgroundColor="#2622A06B"
                 StrokeThickness="0"
                 StrokeShape="RoundRectangle 25"
-                Margin="35,0">
+                Margin="25,0">
 
                 <Image
                     WidthRequest="30"
@@ -82,7 +82,7 @@
                 <!-- TOTALIZADORES -->
                 <Border Style="{StaticResource CardStyle}" Padding="5">
 
-                    <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="*,*,*" HorizontalOptions="Center" ColumnSpacing="32" Padding="5">
+                    <Grid RowDefinitions="Auto,*,Auto"  ColumnDefinitions="*,*,*" HorizontalOptions="Fill" ColumnSpacing="32" Padding="5">
 
                         <!-- JORNADAS -->
                         <Border
@@ -152,58 +152,31 @@
                         <Label Grid.Row="1" Grid.Column="2" HorizontalTextAlignment="Center" HorizontalOptions="Center" Text="Lucro médio" FontSize="14" Padding="0, 10,0,0" FontFamily="Inter18ptSemiBold" TextColor="#8E8E93"/>
                         <Label Grid.Row="2" Grid.Column="2" HorizontalTextAlignment="Center" HorizontalOptions="Center" Text="{Binding LucroMedio}"   FontSize="15" Padding="0, 10,0,0" FontFamily="Inter18ptBold"     TextColor="#071B34" />
                         
-                        
-                        <!-- ULTIMOS 7 DIAS-->
-                        <!--<Border
-                                Grid.Row="0"
-                                Grid.Column="3"
-                                Padding="0"
-                                WidthRequest="35"
-                                HeightRequest="35"
-                                BackgroundColor="#F0E5FF"
-                                StrokeThickness="0"
-                                StrokeShape="RoundRectangle 6"
-                                Margin="0">
-
-                            <Image
-                                WidthRequest="25"
-                                HeightRequest="25"
-                                VerticalOptions="Center"
-                                Source="calendar_purple_60dp.png" />
-                            --><!-- icone roxo #9B51E0 --><!--
-                        </Border>
-                        <Label Grid.Row="1" Grid.Column="3" HorizontalOptions="Center" Text="Últimos 90 dias" FontSize="12" Padding="0, 10,0,0" FontFamily="Inter18ptSemiBold" TextColor="#8E8E93" />
-                        <Label Grid.Row="2" Grid.Column="3" HorizontalOptions="Center" Text="529 jornadas"    FontSize="13" Padding="0,10,0,0"  FontFamily="Inter18ptBold"     TextColor="#071B34" />-->
-                        
                     </Grid>
 
                 </Border>
 
                 <!-- RESUMO FINANCEIRO -->
-                <Border Style="{StaticResource CardStyle}" >
-                    <Grid ColumnDefinitions="Auto,Auto,Auto" HorizontalOptions="Center">
-                        <Grid Grid.Row="0" ColumnDefinitions="33*,33*,33*" HorizontalOptions="Center" Padding="10" ColumnSpacing="38" HeightRequest="50" Margin="0,5,0,10">
-                            <VerticalStackLayout Grid.Column="0" HorizontalOptions="Center" Padding="7,0,0,0">
-                                <Label Text="Ganhos"      FontSize="14" FontFamily="Inter18ptBold"     TextColor="#8E8E93"/>
-                                <Label Text="{Binding TotalGanhosPeriodo, StringFormat='{}{0:C2}'}" FontSize="15" FontFamily="Inter18ptSemiBold" TextColor="#071B34"/>
-                            </VerticalStackLayout>
+                <Border Style="{StaticResource CardStyle}" Padding="10">
 
-                            <VerticalStackLayout Grid.Column="1" HorizontalOptions="End">
-                                <Label Text="Despesas" FontSize="14" FontFamily="Inter18ptBold"     TextColor="#8E8E93" />
-                                <Label Text="{Binding TotalDespesasPeriodo, StringFormat='{}{0:C2}'}" FontSize="15" FontFamily="Inter18ptSemiBold" TextColor="Red" />
-                            </VerticalStackLayout>
+                    <Grid Grid.Row="0" ColumnDefinitions="*,*,*" HorizontalOptions="Fill">
+                        <Grid RowDefinitions="*,*" Grid.Column="0" HorizontalOptions="Fill">
+                            <Label Grid.Row="0" Text="Ganhos" FontSize="14" FontFamily="Inter18ptBold"     TextColor="#8E8E93" HorizontalOptions="Fill" HorizontalTextAlignment="Center"/>
+                            <Label Grid.Row="1" Text="{Binding TotalGanhosPeriodo, StringFormat='{}{0:C2}'}" FontSize="15" FontFamily="Inter18ptSemiBold" TextColor="#071B34" HorizontalOptions="Fill" HorizontalTextAlignment="Center"/>
+                        </Grid>
 
-                            <VerticalStackLayout Grid.Column="2" HorizontalOptions="End">
-                                <Label Text="Lucro"           FontSize="14" FontFamily="Inter18ptBold"     TextColor="#8E8E93" />
-                                <Label Text="{Binding SaldoPeriodo, StringFormat='{}{0:C2}'}" FontSize="15" FontFamily="Inter18ptSemiBold" TextColor="#19C37D"/>
-                            </VerticalStackLayout>
+                        <Grid RowDefinitions="*,*" Grid.Column="1" HorizontalOptions="Fill">
+                            <Label Grid.Row="0" Text="Despesas" FontSize="14" FontFamily="Inter18ptBold"     TextColor="#8E8E93" HorizontalOptions="Fill" HorizontalTextAlignment="Center" />
+                            <Label Grid.Row="1" Text="{Binding TotalDespesasPeriodo, StringFormat='{}{0:C2}'}" FontSize="15" FontFamily="Inter18ptSemiBold" TextColor="Red" HorizontalOptions="Fill" HorizontalTextAlignment="Center" />
+                        </Grid>
+
+                        <Grid RowDefinitions="*,*" Grid.Column="2" HorizontalOptions="Fill">
+                            <Label Grid.Row="0" Text="Lucro"           FontSize="14" FontFamily="Inter18ptBold"     TextColor="#8E8E93" HorizontalOptions="Fill" HorizontalTextAlignment="Center" />
+                            <Label Grid.Row="1" Text="{Binding SaldoPeriodo, StringFormat='{}{0:C2}'}" FontSize="15" FontFamily="Inter18ptSemiBold" TextColor="#19C37D" HorizontalOptions="Fill" HorizontalTextAlignment="Center"/>
                         </Grid>
                     </Grid>
+
                 </Border>
-
-
-
-
 
                 <!-- LISTAGEM -->
                 <CollectionView ItemsSource="{Binding Jornadas}">
@@ -213,8 +186,8 @@
                                 <Grid ColumnDefinitions="Auto,*">
 
                                     <!-- COLUNA ESQUERDA -->
-                                    <Grid Grid.Column="0" BackgroundColor="#F5F7FA">
-                                        <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Padding="15,10,20,10">
+                                    <Grid Grid.Column="0" BackgroundColor="#F5F7FA" HorizontalOptions="Fill" Padding="20">
+                                        <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" >
                                             <Label FontFamily="Inter18ptSemiBold" FontSize="14" Text="{Binding DiaSemanaAbreviado}" HorizontalTextAlignment="Center" TextColor="#8E8E93" />
                                             <Label FontFamily="Inter18ptBold"     FontSize="24" Text="{Binding DiaDoMesEmNumero}"   HorizontalTextAlignment="Center" />
                                             <Label FontFamily="Inter18ptSemiBold" FontSize="14" Text="{Binding NomeMesAbreviado}"   HorizontalTextAlignment="Center" TextColor="#8E8E93"/>
@@ -224,13 +197,13 @@
 
                                     <!-- COLUNA DIREITA, Conteúdo -->
                                     <Grid Grid.Column="1">
-                                        <Grid RowDefinitions="Auto,Auto,Auto">
+                                        <Grid RowDefinitions="Auto,Auto,Auto" >
 
-                                            <Grid Grid.Row="0" ColumnDefinitions="Auto,Auto,Auto,*" Padding="10" ColumnSpacing="5">
+                                            <Grid Grid.Row="0" ColumnDefinitions="Auto,1*,3*,3*" Padding="5,8,5,2"  >
 
                                                 <!-- CONCLUIDA - ICONE RELOGIO - INTERVALO - TOTAL DE HORAS -->
-                                                <Border Grid.Column="0" BackgroundColor="{Binding StatusBackgroundColor}" StrokeThickness="0" StrokeShape="RoundRectangle 15" HorizontalOptions="Start" Padding="5" HeightRequest="25" WidthRequest="70">
-                                                    <Label Text="{Binding Status}" BackgroundColor="{Binding StatusBackgroundColor}" TextColor="{Binding StatusLabelColor}" FontSize="12" FontFamily="Inter18ptSemiBold" HorizontalTextAlignment="Center" />
+                                                <Border Grid.Column="0" BackgroundColor="{Binding StatusBackgroundColor}" StrokeThickness="0" StrokeShape="RoundRectangle 15" HorizontalOptions="Center" HeightRequest="25" WidthRequest="65">
+                                                    <Label Text="{Binding Status}" BackgroundColor="{Binding StatusBackgroundColor}" TextColor="{Binding StatusLabelColor}" FontSize="12" FontFamily="Inter18ptSemiBold" VerticalTextAlignment="Center" VerticalOptions="Center" HorizontalTextAlignment="Center" />
                                                 </Border>
 
                                                 <Image
@@ -238,27 +211,28 @@
                                                     WidthRequest="20"
                                                     HeightRequest="20"
                                                     VerticalOptions="Center"
-                                                    Source="clock_grey_60dp.png" />
+                                                    Source="clock_grey_60dp.png" HorizontalOptions="Center" />
 
-                                                <Label Grid.Column="2" Text="{Binding Intervalo}" Padding="3" HorizontalOptions="Center" TextColor="#8E8E93" FontSize="13" FontFamily="Inter18ptSemiBold" />
-                                                <Label Grid.Column="3" Text="{Binding TempoAcumulado, StringFormat='{}{0:hh\\:mm}'}"       Padding="3" HorizontalOptions="Center" TextColor="#8E8E93" FontSize="13" FontFamily="Inter18ptSemiBold" />
+                                                <Label Grid.Column="2" Text="{Binding Intervalo}" TextColor="#8E8E93" FontSize="13" FontFamily="Inter18ptSemiBold" VerticalOptions="Center" HorizontalOptions="Center"  />
+                                                <Label Grid.Column="3" Text="{Binding TempoAcumulado, StringFormat='{}{0:hh\\:mm}'}"  TextColor="#8E8E93" FontSize="13" FontFamily="Inter18ptSemiBold" VerticalOptions="Center" HorizontalOptions="Center"/>
                                             </Grid>
 
-                                            <Grid Grid.Row="1" ColumnDefinitions="33*,33*,33*" HorizontalOptions="Fill" ColumnSpacing="22">
-                                                <VerticalStackLayout Grid.Column="0" HorizontalOptions="Center" Padding="7,0,0,0">
-                                                    <Label Text="Ganhos"      FontSize="12" FontFamily="Inter18ptBold"     TextColor="#8E8E93"/>
-                                                    <Label Text="{Binding TotalGanhos, StringFormat='{}{0:C2}'}" FontSize="13" FontFamily="Inter18ptSemiBold" TextColor="#071B34"/>
-                                                </VerticalStackLayout>
+                                            <Grid Grid.Row="1" ColumnDefinitions="*,*,*" HorizontalOptions="Fill">
+                                                <Grid Grid.Column="0" RowDefinitions="*,*" HorizontalOptions="Fill">
+                                                    <Label Grid.Row="0" Text="Ganhos"      FontSize="12" FontFamily="Inter18ptBold"     TextColor="#8E8E93" HorizontalTextAlignment="Center"/>
+                                                    <Label Grid.Row="1" Text="{Binding TotalGanhos, StringFormat='{}{0:C2}'}" FontSize="13" FontFamily="Inter18ptSemiBold" TextColor="#071B34" HorizontalTextAlignment="Center"/>
+                                                </Grid>
 
-                                                <VerticalStackLayout Grid.Column="1" HorizontalOptions="End">
-                                                    <Label Text="Despesas" FontSize="12" FontFamily="Inter18ptBold"     TextColor="#8E8E93" />
-                                                    <Label Text="{Binding TotalDespesas, StringFormat='{}{0:C2}'}" FontSize="13" FontFamily="Inter18ptSemiBold" TextColor="Red" />
-                                                </VerticalStackLayout>
+                                                <Grid Grid.Column="1" RowDefinitions="*,*" HorizontalOptions="Fill">
+                                                    <Label Grid.Row="0" Text="Despesas" FontSize="12" FontFamily="Inter18ptBold"     TextColor="#8E8E93" HorizontalTextAlignment="Center"/>
+                                                    <Label Grid.Row="1" Text="{Binding TotalDespesas, StringFormat='{}{0:C2}'}" FontSize="13" FontFamily="Inter18ptSemiBold" TextColor="Red" HorizontalTextAlignment="Center"/>
+                                                </Grid>
 
-                                                <VerticalStackLayout Grid.Column="2" HorizontalOptions="Center">
-                                                    <Label Text="Lucro"           FontSize="12" FontFamily="Inter18ptBold"     TextColor="#8E8E93" />
-                                                    <Label Text="{Binding Lucro, StringFormat='{}{0:C2}'}" FontSize="13" FontFamily="Inter18ptSemiBold" TextColor="#19C37D"/>
-                                                </VerticalStackLayout>
+                                                <Grid Grid.Column="2" RowDefinitions="*,*" HorizontalOptions="Fill">
+                                                    <Label Grid.Row="0" Text="Lucro"           FontSize="12" FontFamily="Inter18ptBold"     TextColor="#8E8E93" HorizontalTextAlignment="Center"/>
+                                                    <Label Grid.Row="1" Text="{Binding Lucro, StringFormat='{}{0:C2}'}" FontSize="13" FontFamily="Inter18ptSemiBold" TextColor="#19C37D" HorizontalTextAlignment="Center"/>
+                                                </Grid>
+                                               
                                             </Grid>
 
                                             <Grid Grid.Row="2" HorizontalOptions="Start" IsVisible="False">

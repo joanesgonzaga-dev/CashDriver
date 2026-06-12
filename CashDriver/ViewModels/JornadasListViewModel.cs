@@ -67,8 +67,7 @@ namespace CashDriver.ViewModels
                 //Isso troca a referência da coleção inteira. A partir daí, o Binding detecta que a propriedade Jornadas mudou (pois é [ObservableProperty] jornadas)
                 //e recria o ItemsSource,
                 //atualizando corretamente os valores exibidos.
-                Jornadas = new ObservableCollection<Jornada>(await _persistenceService.ObterJornadasAsync());
-                
+                Jornadas = new ObservableCollection<Jornada>(await _jornadaService.RetornarJornadasPeriodo());
                 OnPropertyChanged(nameof(QtdJornadas));
                 OnPropertyChanged(nameof(TotalDeHoras));
                 OnPropertyChanged(nameof(LucroMedio));

@@ -166,5 +166,10 @@ namespace CashDriver.Services
                 await _persistenceService.SalvarJornadaAsync(JornadaAtual);
             }
         }
+
+        public async Task<IEnumerable<Jornada>> RetornarJornadasPeriodo()
+        {
+            return await _persistenceService.ObterJornadasAsync();
+        }
     }
 }

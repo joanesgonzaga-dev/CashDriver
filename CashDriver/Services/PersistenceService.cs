@@ -156,7 +156,7 @@ namespace CashDriver.Services
 
         public async Task<List<Jornada>> ObterJornadasAsync()
         {
-            return await _dbContext.Jornadas.AsNoTracking().OrderByDescending(j => j.Inicio).ToListAsync();
+            return await _dbContext.Jornadas.AsNoTracking().Include(j => j.Ganhos).Include(j => j.Despesas).OrderByDescending(j => j.Inicio).ToListAsync();
         }
 
         public async Task<List<Plataforma>> ObterPlataformasAsync()
