@@ -93,8 +93,11 @@ namespace CashDriver.Services
             {
                 return;
             }
+
+            JornadaAtual.TotalDespesas -= despesa.Valor;
+            JornadaAtual.Lucro = JornadaAtual.TotalGanhos - JornadaAtual.TotalDespesas;
             await _persistenceService.RemoverDespesa(despesa);
-            JornadaAtual.Despesas.Remove(despesa);
+            await _persistenceService.SalvarJornadaAsync(JornadaAtual);
         }
 
         public async Task RemoverGanhoAsync(Guid ganhoId)
@@ -104,8 +107,11 @@ namespace CashDriver.Services
             {
                 return;
             }
+
+            JornadaAtual.TotalGanhos -= ganho.Valor;
+            JornadaAtual.Lucro = JornadaAtual.TotalGanhos - JornadaAtual.TotalDespesas;
             await _persistenceService.RemoverGanho(ganho);
-            JornadaAtual?.Ganhos.Remove(ganho);
+            await _persistenceService.SalvarJornadaAsync(JornadaAtual);
         }
 
         public async Task LancarDespesaAsync(Despesa despesa)
@@ -118,6 +124,9 @@ namespace CashDriver.Services
                 }
 
                 await _persistenceService.AdicionarDespesaAsync(despesa);
+                JornadaAtual.TotalDespesas += despesa.Valor;
+                JornadaAtual.Lucro = JornadaAtual.TotalGanhos - JornadaAtual.TotalDespesas;
+                await _persistenceService.SalvarJornadaAsync(JornadaAtual);
             }
             catch (Exception)
             {
@@ -135,6 +144,9 @@ namespace CashDriver.Services
                 }
 
                 await _persistenceService.AdicionarGanhoAsync(ganho);
+                JornadaAtual.TotalGanhos += ganho.Valor;
+                JornadaAtual.Lucro = JornadaAtual.TotalGanhos - JornadaAtual.TotalDespesas;
+                await _persistenceService.SalvarJornadaAsync(JornadaAtual);
             }
             catch (Exception)
             {

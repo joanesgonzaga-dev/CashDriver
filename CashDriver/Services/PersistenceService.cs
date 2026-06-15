@@ -156,33 +156,20 @@ namespace CashDriver.Services
 
         public async Task<List<Jornada>> ObterJornadasAsync()
         {
-            return await _dbContext.Jornadas.AsNoTracking().Include(j => j.Ganhos).Include(j => j.Despesas).OrderByDescending(j => j.Inicio).ToListAsync();
+            //return await _dbContext.Jornadas.AsNoTracking().Where(j => j.Status != Models.Enums.EnumStatusJornada.Ativa).Include(j => j.Ganhos).Include(j => j.Despesas).OrderByDescending(j => j.Inicio).ToListAsync();
+            return await _dbContext.Jornadas.AsNoTracking().Where(j => j.Status != Models.Enums.EnumStatusJornada.Ativa).OrderByDescending(j => j.Inicio).ToListAsync();
         }
 
         public async Task<List<Plataforma>> ObterPlataformasAsync()
         {
-            try
-            {
-                await SeedPlataformasAsync();
-                return await _dbContext.Plataformas.AsNoTracking().ToListAsync();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            await SeedPlataformasAsync();
+            return await _dbContext.Plataformas.AsNoTracking().ToListAsync(); 
         }   
 
         public async Task<List<TipoDespesa>> ObterTiposDespesaAsync()
         {
-            try
-            {
-                await SeedTiposDespesaAsync();
-                return await _dbContext.TiposDespesa.AsNoTracking().ToListAsync();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            await SeedTiposDespesaAsync();
+            return await _dbContext.TiposDespesa.AsNoTracking().ToListAsync();
         }
 
        

@@ -18,9 +18,10 @@ namespace CashDriver.Models
         public DateTime? InicioPeriodoAtual { get; set; } = null;
         public DateTime? Termino { get; set; }
         public TimeSpan? TempoAcumulado { get; set; } = TimeSpan.Zero;
-        public decimal TotalGanhos => Ganhos?.Sum(g => g.Valor) ?? 0;
-        public decimal TotalDespesas => Despesas?.Sum(d => d.Valor) ?? 0;
-        public decimal Lucro => TotalGanhos - TotalDespesas;
+        public string TempoAcumuladoFormatado => $"{(int?)TempoAcumulado?.TotalHours:00}:{TempoAcumulado?.Minutes:00}";
+        public decimal TotalGanhos { get; set; }//=> Ganhos?.Sum(g => g.Valor) ?? 0;
+        public decimal TotalDespesas { get; set; }//=> Despesas?.Sum(d => d.Valor) ?? 0;
+        public decimal Lucro { get; set; }//=> TotalGanhos - TotalDespesas;
         
         [ObservableProperty]
         public EnumStatusJornada status = EnumStatusJornada.Inativa;
@@ -42,7 +43,7 @@ namespace CashDriver.Models
         public string NomeMesAbreviado => Inicio.ToString("MMM", new CultureInfo("pt-BR")).Replace(".", "").ToUpper();
 
         [NotMapped]
-        public string Intervalo => Inicio.ToString(@"HH\:mm - ") + (Termino == null ? "" : Termino?.ToString(@"HH\:mm"));
+        public string Intervalo => Inicio.ToString(@"HH\:mm/") + (Termino == null ? "" : Termino?.ToString(@"HH\:mm"));
 
         [NotMapped]
         public Color StatusLabelColor =>

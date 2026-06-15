@@ -213,8 +213,8 @@
                                                     VerticalOptions="Center"
                                                     Source="clock_grey_60dp.png" HorizontalOptions="Center" />
 
-                                                <Label Grid.Column="2" Text="{Binding Intervalo}" TextColor="#8E8E93" FontSize="13" FontFamily="Inter18ptSemiBold" VerticalOptions="Center" HorizontalOptions="Center"  />
-                                                <Label Grid.Column="3" Text="{Binding TempoAcumulado, StringFormat='{}{0:hh\\:mm}'}"  TextColor="#8E8E93" FontSize="13" FontFamily="Inter18ptSemiBold" VerticalOptions="Center" HorizontalOptions="Center"/>
+                                                <Label Grid.Column="2" Text="{Binding Intervalo}" TextColor="#8E8E93" FontSize="13" FontFamily="Inter18ptRegular" VerticalOptions="Center" HorizontalOptions="Center"  />
+                                                <Label Grid.Column="3" Text="{Binding TempoAcumuladoFormatado}"  TextColor="#8E8E93" FontSize="13" FontFamily="Inter18ptRegular" VerticalOptions="Center" HorizontalOptions="Center"/>
                                             </Grid>
 
                                             <Grid Grid.Row="1" ColumnDefinitions="*,*,*" HorizontalOptions="Fill">
@@ -314,7 +314,7 @@
 
                     <!-- Clique -->
                     <Grid.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding CriarMetaRapidoCommand}" />
+                        <TapGestureRecognizer Command="{Binding FiltrarCommand}" />
                     </Grid.GestureRecognizers>
                 </Grid>
             </Border>

@@ -26,14 +26,19 @@ namespace CashDriver.ViewModels
         public bool Pausada => _jornadaService.JornadaAtual != null && (_jornadaService.JornadaAtual?.Status ==  EnumStatusJornada.Pausa);
         public bool Inativa => _jornadaService.JornadaAtual == null || _jornadaService.JornadaAtual?.Status == EnumStatusJornada.Encerrada;
         private System.Timers.Timer _timer;
-        public decimal TotalGanhos => _jornadaService.JornadaAtual is null?  0 : _jornadaService.JornadaAtual.TotalGanhos;// ?.Ganhos?.Sum(g => g.Valor) ?? 0M;
-        public decimal TotalDespesas => _jornadaService.JornadaAtual is null ? 0 : _jornadaService.JornadaAtual.TotalDespesas;// .Despesas?.Sum(d => d.Valor) ?? 0M;
+        public decimal TotalGanhos => _jornadaService.JornadaAtual is null?  0 : _jornadaService.JornadaAtual.TotalGanhos;
+        public decimal TotalDespesas => _jornadaService.JornadaAtual is null ? 0 : _jornadaService.JornadaAtual.TotalDespesas;
         public decimal Lucro => TotalGanhos - TotalDespesas;
+        
         [ObservableProperty]
         private ObservableCollection<Meta> metas = new();
+        
         public ObservableCollection<ExtratoItem> Extrato { get; } = new();
+        
         public string HoraInicio => "Iniciada às " + _jornadaService?.JornadaAtual?.Inicio.ToShortTimeString();
+        
         public bool TemLancamentos =>  Extrato.Any() == true;
+        
         public JornadaViewModel(JornadaService jornadaService)
         {
             _jornadaService = jornadaService;
@@ -60,11 +65,10 @@ namespace CashDriver.ViewModels
 
             // Mantém a lógica centralizada:
             // a atualização de TemLancamentos não precisa ser chamada manualmente em vários pontos do código
-            Extrato.CollectionChanged += (s, e) =>
-            {
-                NotificaUI();
-                //OnPropertyChanged(nameof(TemLancamentos));
-            };
+            //Extrato.CollectionChanged += (s, e) =>
+            //{
+            //    OnPropertyChanged(nameof(TemLancamentos));
+            //};
 
 
             //Metas.CollectionChanged += (s, e) =>
@@ -76,18 +80,36 @@ namespace CashDriver.ViewModels
             if (!WeakReferenceMessenger.Default.IsRegistered<GanhoLancadoMessage>(this))
             {
                 WeakReferenceMessenger.Default.Register<GanhoLancadoMessage>(this, (r,m)=> {
-                    MontarExtrato();
+                    AdicionaGanhoAoExtrato(m.Ganho);
+                    NotificaUIValores();
                 });
             }
 
             if (!WeakReferenceMessenger.Default.IsRegistered<DespesaLancadaMessage>(this))
             {
                 WeakReferenceMessenger.Default.Register<DespesaLancadaMessage>(this, (r, m) => {
-                    MontarExtrato();
+                    AdicionaDespesaAoExtrato(m.Despesa);
+                    NotificaUIValores();
                 });
             }
 
             #endregion
+        }
+
+        private void AdicionaGanhoAoExtrato(Ganho ganho)
+        {
+            var item = new ExtratoItem
+            {
+                Id = Guid.NewGuid(),
+                LancamentoId = ganho.Id,
+                Tipo = Models.Enums.EnumTipoExtrato.Ganho,
+                Descricao = ganho.PlataformaNome,
+                Valor = ganho.Valor,
+                ValorTexto = $"+ {ganho.Valor.ToString("c", new CultureInfo("pt-br"))}",
+                ValorColor = Color.FromArgb("#19c37d"),
+                Data = ganho.CreatedAt
+            };
+            Extrato.Insert(0, item);
         }
 
         [RelayCommand]
@@ -107,7 +129,25 @@ namespace CashDriver.ViewModels
 
             popup = new LancarDespesaPopup(vm);
             
-            await Shell.Current.CurrentPage.ShowPopupAsync(popup);
+            var obj = await Shell.Current.CurrentPage.ShowPopupAsync(popup);
+        }
+
+        private void AdicionaDespesaAoExtrato(Despesa despesa)
+        {
+            var tipo = _jornadaService?.CadastroDeDespesas.FirstOrDefault(t => t.Id == despesa.TipoDespesaId);
+            var item = new ExtratoItem()
+            {
+                Id = Guid.NewGuid(),
+                LancamentoId = despesa.Id,
+                Tipo = Models.Enums.EnumTipoExtrato.Despesa,
+                Descricao = tipo.DescricaoTipo,//despesa.Tipo?.DescricaoTipo ?? string.Empty; //tá disparando exception
+                Valor = despesa.Valor,
+                ValorTexto = $"- {despesa.Valor.ToString("C", new CultureInfo("pt-BR"))}",
+                ValorColor = Color.FromArgb("#FF4500"),
+                Data = despesa.CreatedAt
+            };
+            
+            Extrato.Insert(0, item);
         }
 
         [RelayCommand]
@@ -128,6 +168,7 @@ namespace CashDriver.ViewModels
             popup = new LancarGanhoPopup(vm);
 
             await Shell.Current.CurrentPage.ShowPopupAsync(popup);
+            NotificaUIValores();
         }
 
         [RelayCommand]
@@ -141,13 +182,12 @@ namespace CashDriver.ViewModels
 
             if (resultado)
             {
-
                 //Persistir neste momento
                 await _jornadaService.EncerrarJornadaAsync();
                 _jornadaService.JornadaAtual = null;
-                //NotificaUI();
-                MontarExtrato();
-                CarregarMetas();
+                Extrato.Clear();
+                NotificaUIStatus();
+                NotificaUIValores();
             }
         }
 
@@ -167,18 +207,19 @@ namespace CashDriver.ViewModels
                     "Jornada",
                     $"Já existe uma Jornada iniciada!",
                     "OK"
-                    );
+                );
             }
 
             else
             {
-                _jornadaService?.CriarJornadaAsync();
+                await _jornadaService.CriarJornadaAsync();
             }
 
             //navegar
             await Shell.Current.GoToAsync("//Jornada"); // //Page só funciona se os ShellContent em AppShell.xaml tiverem o atributo Route="SuaPage"
             CarregarDadosJornada();
-
+            NotificaUIValores();
+            NotificaUIStatus();
         }
 
         public string DuracaoFormatada
@@ -198,12 +239,15 @@ namespace CashDriver.ViewModels
             if (_jornadaService.JornadaAtual != null)
             {
                 MontarExtrato();
+                NotificaUIStatus();
+                NotificaUIValores();
             } 
         }
 
         private void MontarExtrato()
         {
-            Extrato.Clear();
+
+            List<ExtratoItem> itens = new List<ExtratoItem>();
 
             ////Ganhos
             foreach (var ganho in _jornadaService.JornadaAtual?.Ganhos ?? Enumerable.Empty<Ganho>())
@@ -220,8 +264,9 @@ namespace CashDriver.ViewModels
                     Data = ganho.CreatedAt
                 };
 
-                var index = Extrato.TakeWhile(x => x.Data > ganho.CreatedAt).Count();
-                Extrato.Insert(index, item);
+                //var index = Extrato.TakeWhile(x => x.Data > ganho.CreatedAt).Count();
+                itens.Add(item); //Insert(index, item);
+
             }
 
             //Despesas
@@ -240,8 +285,16 @@ namespace CashDriver.ViewModels
                     Data = despesa.CreatedAt
                 };
 
-                var index = Extrato.TakeWhile(x => x.Data > despesa.CreatedAt).Count();
-                Extrato.Insert(index, item);
+                //var index = Extrato.TakeWhile(x => x.Data > despesa.CreatedAt).Count();
+                itens.Add(item); //Insert(index, item);
+            }
+
+            Extrato.Clear();
+            var itensOrdenados = itens.OrderByDescending(i => i.Data);
+
+            foreach (var item in itensOrdenados)
+            {
+                Extrato.Add(item);
             }
         }
 
@@ -284,9 +337,11 @@ namespace CashDriver.ViewModels
             {
                 Extrato.Remove(itemToRemove);
             }
+
+            NotificaUIValores();
         }
 
-        public async Task RecuperarAsync()
+        public async Task RecuperarJornadaAtivaAsync()
         {
             await _jornadaService.RecuperarJornadaAtivaAsync();
         }
@@ -297,8 +352,8 @@ namespace CashDriver.ViewModels
             if (_jornadaService?.JornadaAtual?.Status == EnumStatusJornada.Ativa)
             {
                 await _jornadaService.PausarJornadaAsync();
-                await RecuperarAsync();
-                NotificaUI();
+                await RecuperarJornadaAtivaAsync();
+                NotificaUIStatus();
             }
         }
 
@@ -306,20 +361,26 @@ namespace CashDriver.ViewModels
         private async Task RetomarJornada()
         {
             await _jornadaService.RetomarJornadaPausadaAsync();
-            await RecuperarAsync();
-            NotificaUI();
+            await RecuperarJornadaAtivaAsync();
+            NotificaUIStatus();
+            NotificaUIValores();
         }
 
-        private void NotificaUI()
+        private void NotificaUIStatus()
         {
             OnPropertyChanged(nameof(DuracaoFormatada));
             OnPropertyChanged(nameof(Ativa));
             OnPropertyChanged(nameof(Inativa));
             OnPropertyChanged(nameof(Pausada));
+            OnPropertyChanged(nameof(HoraInicio));
+           
+        }
+
+        private void NotificaUIValores()
+        {
             OnPropertyChanged(nameof(TotalGanhos));
             OnPropertyChanged(nameof(TotalDespesas));
             OnPropertyChanged(nameof(Lucro));
-            OnPropertyChanged(nameof(HoraInicio));
             OnPropertyChanged(nameof(TemLancamentos));
         }
     }

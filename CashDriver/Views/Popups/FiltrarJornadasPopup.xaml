@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup
+    x:Class="CashDriver.Views.Popups.FiltrarJornadasPopup"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    Color="#80000000">
+
+    <Border
+        BackgroundColor="White"
+        Padding="20"
+        StrokeThickness="0"
+        StrokeShape="RoundRectangle 30">
+
+        <ScrollView>
+
+            <VerticalStackLayout Spacing="20">
+
+                <!-- Cabeçalho -->
+
+                <Grid ColumnDefinitions="*,Auto">
+
+                    <Label
+                        Text="Filtros"
+                        FontSize="28"
+                        FontAttributes="Bold"
+                        TextColor="#24344D"/>
+
+                    <!-- FECHAR -->
+                    <Border
+                        Grid.Column="1"
+                        WidthRequest="38"
+                        HeightRequest="38"
+                        BackgroundColor="#F2F2F7"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 19"
+                        HorizontalOptions="End"
+                        VerticalOptions="Start">
+
+                        <ImageButton
+                            Source="close_black_50dp.svg"
+                            BackgroundColor="Transparent"
+                            WidthRequest="18"
+                            HeightRequest="18"
+                            Padding="0"
+                            Clicked="FecharPopup_Clicked"/>
+                    </Border>
+                </Grid>
+
+                <!-- PERÍODO -->
+
+                <Border
+                    Padding="16"
+                    Stroke="#EAECEF"
+                    BackgroundColor="White"
+                    StrokeShape="RoundRectangle 20">
+
+                    <VerticalStackLayout Spacing="15">
+
+                        <HorizontalStackLayout Spacing="10">
+
+                            <Image
+                                Source="calendar.png"
+                                HeightRequest="20"/>
+
+                            <Label
+                                Text="PERÍODO"
+                                FontAttributes="Bold"
+                                FontSize="14"
+                                TextColor="#3A4A63"/>
+                        </HorizontalStackLayout>
+
+                        <Grid ColumnDefinitions="*,*"
+                              ColumnSpacing="10" HorizontalOptions="Fill" VerticalOptions="Fill">
+
+                            <!-- Data Inicial -->
+
+                            <Border
+                                x:Name="DataInicialBorder"
+                                Grid.Column="0"
+                                Padding="12"
+                                Stroke="#E1E5EA"
+                                StrokeShape="RoundRectangle 12">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <VerticalStackLayout>
+
+                                        <Label
+                                            Text="Data inicial"
+                                            FontSize="12"
+                                            TextColor="#7A8598"/>
+
+                                        <Label
+                                            Text="{Binding DataInicial, StringFormat='{0:dd/MM/yyyy}'}"
+                                            FontSize="16"
+                                            FontAttributes="Bold"/>
+                                    </VerticalStackLayout>
+
+                                    <Image
+                                        Grid.Column="1"
+                                        Source="calendar_stronggreen_60dp.png"
+                                        HeightRequest="18"
+                                        VerticalOptions="Center"/>
+
+                                    <DatePicker
+                                        IsVisible="True"
+                                        x:Name="DataInicialPicker"
+                                        Opacity="0.01"
+                                        HeightRequest="1"
+                                        WidthRequest="180"
+                                        Date="{Binding DataInicial}"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- Data Final -->
+
+                            <Border
+                                Grid.Column="1"
+                                Padding="12"
+                                Stroke="#E1E5EA"
+                                StrokeShape="RoundRectangle 12">
+
+                                <Grid ColumnDefinitions="*,Auto">
+
+                                    <VerticalStackLayout>
+
+                                        <Label
+                                            Text="Data final"
+                                            FontSize="12"
+                                            TextColor="#7A8598"/>
+
+                                        <Label
+                                            Text="{Binding DataFinal, StringFormat='{0:dd/MM/yyyy}'}"
+                                            FontSize="16"
+                                            FontAttributes="Bold"/>
+                                    </VerticalStackLayout>
+
+                                    <Image
+                                        Grid.Column="1"
+                                        Source="calendar_stronggreen_60dp.png"
+                                        HeightRequest="18"
+                                        VerticalOptions="Center"/>
+
+                                    <DatePicker
+                                         IsVisible="True"
+                                        x:Name="DataFinalPicker"
+                                        Opacity="0.01"
+                                        HeightRequest="1"
+                                        WidthRequest="180"
+                                        Date="{Binding DataFinal}"/>
+                                </Grid>
+
+                            </Border>
+
+                        </Grid>
+
+                        <!-- Chips -->
+
+                        <FlexLayout
+                            Wrap="Wrap"
+                            Direction="Row"
+                            JustifyContent="Start"
+                            AlignItems="Start">
+
+                            <Button Text="Hoje"
+                                    Margin="4"
+                                    CornerRadius="10"
+                                    BackgroundColor="#F3F5F8"
+                                    TextColor="#344054"/>
+
+                            <Button Text="Últimos 7 dias"
+                                    Margin="4"
+                                    CornerRadius="10"
+                                    BackgroundColor="#DDF7EC"
+                                    TextColor="#0AAE63"/>
+
+                            <Button Text="Últimos 30 dias"
+                                    Margin="4"
+                                    CornerRadius="10"
+                                    BackgroundColor="#F3F5F8"
+                                    TextColor="#344054"/>
+
+                            <Button Text="Este mês"
+                                    Margin="4"
+                                    CornerRadius="10"
+                                    BackgroundColor="#F3F5F8"
+                                    TextColor="#344054"/>
+
+                            <Button Text="Mês passado"
+                                    Margin="4"
+                                    CornerRadius="10"
+                                    BackgroundColor="#F3F5F8"
+                                    TextColor="#344054"/>
+
+                            <Button Text="Personalizado"
+                                    Margin="4"
+                                    CornerRadius="10"
+                                    BackgroundColor="#F3F5F8"
+                                    TextColor="#344054"/>
+
+                        </FlexLayout>
+
+                    </VerticalStackLayout>
+
+                </Border>
+
+                <!-- METAS -->
+
+                <!--<Border
+                    Padding="16"
+                    Stroke="#EAECEF"
+                    StrokeShape="RoundRectangle 20">
+
+                    <VerticalStackLayout Spacing="15">
+
+                        <HorizontalStackLayout Spacing="10">
+
+                            <Image
+                                Source="target.png"
+                                HeightRequest="20"/>
+
+                            <Label
+                                Text="METAS VINCULADAS"
+                                FontAttributes="Bold"
+                                FontSize="14"/>
+                        </HorizontalStackLayout>
+
+                        <Border
+                            Padding="12"
+                            Stroke="#E1E5EA"
+                            StrokeShape="RoundRectangle 12">
+
+                            <Grid ColumnDefinitions="*,Auto">
+
+                                <Label
+                                    Text="Todas as metas"
+                                    VerticalOptions="Center"/>
+
+                                <Image
+                                    Grid.Column="1"
+                                    Source="arrow_down.png"
+                                    HeightRequest="16"/>
+                            </Grid>
+
+                        </Border>
+
+                        <VerticalStackLayout Spacing="12">
+
+                            <CheckBox IsChecked="True"/>
+                            <CheckBox IsChecked="True"/>
+                            <CheckBox IsChecked="False"/>
+                            <CheckBox IsChecked="False"/>
+
+                        </VerticalStackLayout>
+
+                        <Label
+                            Text="Ver mais"
+                            HorizontalOptions="Center"
+                            TextColor="#556070"/>
+
+                    </VerticalStackLayout>
+
+                </Border>-->
+
+                <!-- SITUAÇÃO -->
+
+                <Border
+                    Padding="16"
+                    Stroke="#EAECEF"
+                    StrokeShape="RoundRectangle 20">
+
+                    <VerticalStackLayout Spacing="15">
+
+                        <HorizontalStackLayout Spacing="10">
+
+                            <Image
+                                Source="status.png"
+                                HeightRequest="20"/>
+
+                            <Label
+                                Text="SITUAÇÃO DA JORNADA"
+                                FontAttributes="Bold"
+                                FontSize="14"/>
+                        </HorizontalStackLayout>
+
+                        <HorizontalStackLayout Spacing="10">
+
+                            <Button
+                                Text="Todas"
+                                CornerRadius="10"
+                                BackgroundColor="#DDF7EC"
+                                TextColor="#0AAE63"/>
+
+                            <Button
+                                Text="Concluídas"
+                                CornerRadius="10"
+                                BackgroundColor="#F3F5F8"
+                                TextColor="#344054"/>
+
+                            <Button
+                                Text="Canceladas"
+                                CornerRadius="10"
+                                BackgroundColor="#F3F5F8"
+                                TextColor="#344054"/>
+
+                        </HorizontalStackLayout>
+
+                    </VerticalStackLayout>
+
+                </Border>
+
+                <!-- AÇÕES -->
+
+                <Button
+                    Text="Aplicar filtros"
+                    HeightRequest="56"
+                    FontAttributes="Bold"
+                    TextColor="White"
+                    BackgroundColor="#00C06B"
+                    CornerRadius="14"/>
+
+                <Button
+                    Text="Limpar filtros"
+                    BackgroundColor="Transparent"
+                    TextColor="#00C06B"
+                    FontAttributes="Bold"/>
+
+            </VerticalStackLayout>
+
+        </ScrollView>
+
+    </Border>
+
+</toolkit:Popup>

@@ -1,6 +1,9 @@
 ﻿using CashDriver.Models;
 using CashDriver.Services;
+using CashDriver.Views.Popups;
+using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 
 namespace CashDriver.ViewModels
@@ -8,7 +11,6 @@ namespace CashDriver.ViewModels
     public partial class JornadasListViewModel : ObservableObject
     {
         JornadaService _jornadaService;
-        PersistenceService _persistenceService;
 
         [ObservableProperty]
         private ObservableCollection<Jornada> jornadas = new();
@@ -16,9 +18,9 @@ namespace CashDriver.ViewModels
         public string QtdJornadas => Jornadas is null ? "00" : Jornadas.Count.ToString("D2");
 
         public decimal TotalGanhosPeriodo => Jornadas is null ? 0M : Jornadas.Sum(j => j.TotalGanhos);
-        //public string strTotalGanhosPeriodo => Jornadas is null ? "R$ 00,00": Jornadas.Sum(j => j.TotalGanhos).ToString("D2");
+        
         public decimal TotalDespesasPeriodo => Jornadas is null ? 0M : Jornadas.Sum(j => j.TotalDespesas);
-        //public string strTotalDespesasPeriodo => Jornadas is null ? "R$ 00,00" : Jornadas.Sum(j => j.TotalDespesas).ToString("D2");
+        
         public decimal SaldoPeriodo => (TotalGanhosPeriodo - TotalDespesasPeriodo);
 
         public string TotalDeHoras
@@ -41,44 +43,47 @@ namespace CashDriver.ViewModels
         {
             get
             {
-                try
-                {
-                    decimal media = Jornadas.Count == 0 ? 0 : Jornadas.Sum(j => j.TotalGanhos - j.TotalDespesas) / Jornadas.Count;
-                    return media.ToString("C2");
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-                
+                decimal media = Jornadas.Count == 0 ? 0 : Jornadas.Sum(j => j.TotalGanhos - j.TotalDespesas) / Jornadas.Count;
+                return media.ToString("C2");
             }
         }
 
-        public JornadasListViewModel(JornadaService jornadaService, PersistenceService persistenceService)
+        public JornadasListViewModel(JornadaService jornadaService)
         {
             _jornadaService = jornadaService;
-            _persistenceService = persistenceService;
         }
 
         public async Task MontaListaAsync()
         {
-            try
-            {
-                //Isso troca a referência da coleção inteira. A partir daí, o Binding detecta que a propriedade Jornadas mudou (pois é [ObservableProperty] jornadas)
-                //e recria o ItemsSource,
-                //atualizando corretamente os valores exibidos.
-                Jornadas = new ObservableCollection<Jornada>(await _jornadaService.RetornarJornadasPeriodo());
-                OnPropertyChanged(nameof(QtdJornadas));
-                OnPropertyChanged(nameof(TotalDeHoras));
-                OnPropertyChanged(nameof(LucroMedio));
-                OnPropertyChanged(nameof(TotalGanhosPeriodo));
-                OnPropertyChanged(nameof(TotalDespesasPeriodo));
-                OnPropertyChanged(nameof(SaldoPeriodo));
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            //Isso troca a referência da coleção inteira. A partir daí, o Binding detecta que a propriedade Jornadas mudou (pois é [ObservableProperty] jornadas)
+            //e recria o ItemsSource,
+            //atualizando corretamente os valores exibidos.
+            Jornadas = new ObservableCollection<Jornada>(await _jornadaService.RetornarJornadasPeriodo());
+            NotificaUI();
+        }
+
+        private void NotificaUI()
+        {
+            OnPropertyChanged(nameof(QtdJornadas));
+            OnPropertyChanged(nameof(TotalDeHoras));
+            OnPropertyChanged(nameof(LucroMedio));
+            OnPropertyChanged(nameof(TotalGanhosPeriodo));
+            OnPropertyChanged(nameof(TotalDespesasPeriodo));
+            OnPropertyChanged(nameof(SaldoPeriodo));
+        }
+
+        [RelayCommand]
+        private async Task Filtrar()
+        {
+            FiltrarJornadasPopup? popup = null;
+            var vm = new FiltrarJornadasPopupViewModel(
+                _jornadaService,
+                () => popup?.Close());
+
+            popup = new FiltrarJornadasPopup(vm);
+            await Shell.Current.CurrentPage.ShowPopupAsync(popup);
+
+
         }
     }
 }

@@ -23,12 +23,14 @@ public partial class JornadaPage : ContentPage
 
         if (BindingContext is JornadaViewModel vm)
         {
-            if (!_initialized)
-            {
-                await vm.RecuperarAsync();
-                _initialized = true;
-            }
-           // await vm.RecuperarAsync();
+            //if (!_initialized)
+            //{
+            //    await vm.RecuperarAsync();
+            //    vm.CarregarDadosJornada();
+            //    _initialized = true;
+            //}
+            // await vm.RecuperarAsync();
+            await vm.RecuperarJornadaAtivaAsync();
             vm.CarregarDadosJornada();
         }
        
