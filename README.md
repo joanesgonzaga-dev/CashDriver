@@ -49,7 +49,8 @@ Ajudar motoristas de aplicativos a tomarem decisões mais inteligentes sobre sua
 * Acompanhamento de progresso
 * Indicadores de atingimento
 * Comparação entre resultado realizado e meta planejada
-
+* Distribuição/rateio de ganhos da Jornada  entre as metas selecionadas
+  
 ## 🔮 Roadmap
 
 ### Sincronização em Nuvem
