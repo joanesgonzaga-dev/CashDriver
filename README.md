@@ -82,7 +82,7 @@ O projeto foi desenvolvido utilizando uma arquitetura baseada em MVVM (Model-Vie
   <img src="CashDriver/logo.jpg" height="120" style="vertical-align: middle; margin-right: 20px;">
   <img src="CashDriver/jellybeansmode.png" height="120" style="vertical-align: middle;  margin-right: 20px;">
   <img src="CashDriver/jornadaslista.png" height="120" style="vertical-align: middle;  margin-right: 20px;">
-  <img src="CashDriver/CashDriver/rateio_metas.png" height="120" style="vertical-align: middle;  margin-right: 20px;">
+  <img src="CashDriver/rateio_metas.png" height="120" style="vertical-align: middle;  margin-right: 20px;">
   <img src="CashDriver/darkmode.png" height="120" style="vertical-align: middle;">
 </p>
 
