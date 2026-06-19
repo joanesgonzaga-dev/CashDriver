@@ -78,7 +78,10 @@ O projeto foi desenvolvido utilizando uma arquitetura baseada em MVVM (Model-Vie
 * Reaproveitamento de código
 
 ## Prints
-<img src="CashDriver/logo.jpg" width="300">
+<p align="center">
+  <img src="CashDriver/logo.jpg" width="250">
+  <img src="CashDriver/jellybeansmode.png" width="250">
+</p>
 
 ## 🛠️ Tecnologias Utilizadas
 
