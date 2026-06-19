@@ -78,7 +78,7 @@ O projeto foi desenvolvido utilizando uma arquitetura baseada em MVVM (Model-Vie
 * Reaproveitamento de código
 
 ## Prints
-<img src="logo.jpeg" width="300">
+<img src="CashDriver/logo.jpg" width="300">
 
 ## 🛠️ Tecnologias Utilizadas
 
