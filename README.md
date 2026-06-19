@@ -77,6 +77,9 @@ O projeto foi desenvolvido utilizando uma arquitetura baseada em MVVM (Model-Vie
 * Melhor testabilidade
 * Reaproveitamento de código
 
+## Prints
+<img src="logo.jpeg" width="300">
+
 ## 🛠️ Tecnologias Utilizadas
 
 ### Frontend
