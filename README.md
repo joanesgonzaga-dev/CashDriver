@@ -123,10 +123,6 @@ Com o CashDriver é possível responder perguntas como:
 * Motoristas de aplicativos de entrega
 * Profissionais autônomos que desejam controlar receitas e despesas por jornada de trabalho
 
-## 📷 Capturas de Tela
-
-Em breve.
-
 ## 🤝 Contribuições
 
 Sugestões, melhorias e feedbacks são sempre bem-vindos.
