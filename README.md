@@ -132,8 +132,8 @@ Sugestões, melhorias e feedbacks são sempre bem-vindos.
 
 ## 📄 Licença
 
-Este projeto está licenciado sob os termos da licença definida pelo autor.
+Ainda não especificado.
 
 ---
 
-Desenvolvido com ❤️ utilizando .NET MAUI e C#.
+Desenvolvido com .NET MAUI e C#.
