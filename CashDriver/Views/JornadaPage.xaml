@@ -557,41 +557,70 @@
 
         <!-- BOTÃO INFERIOR -->
         <Grid Grid.Row="2"
+              ColumnDefinitions="*,*"
+              ColumnSpacing="5"
               Padding="22,10,22,2"
-              BackgroundColor="#FAFAFA">
+              BackgroundColor="#FAFAFA"
+              HorizontalOptions="Fill"
+              >
 
-            <!-- INICIAR -->
-            <Button Text="INICIAR JORNADA"
-                    IsVisible="{Binding Inativa}"
-                    HeightRequest="62"
-                    CornerRadius="28"
+
+            <Border
+                Grid.Column="0"
+                BackgroundColor="#FF3B30"
+                HeightRequest="62"
+                
+                StrokeThickness="0"
+                HorizontalOptions="Fill"
+                 IsVisible="{Binding Ativa}">
+
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="28,0,28,0" />
+                </Border.StrokeShape>
+
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding EncerrarJornadaCommand}" />
+                </Border.GestureRecognizers>
+
+                <Label
+                    Text="ENCERRAR"
+                    TextColor="White"
                     FontSize="17"
                     FontAttributes="Bold"
-                    BackgroundColor="#111111"
-                    TextColor="White"
-                    Command="{Binding IniciarJornadaCommand}"/>
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Center"
+                    HorizontalTextAlignment="Center"/>
+                
+            </Border>
 
-            <!-- ENCERRAR -->
-            <Button Text="ENCERRAR JORNADA"
-                    IsVisible="{Binding Ativa}"
-                    HeightRequest="62"
-                    CornerRadius="28"
-                    FontSize="17"
-                    FontAttributes="Bold"
-                    BackgroundColor="#FF3B30"
-                    TextColor="White"
-                    Command="{Binding EncerrarJornadaCommand}"/>
+            <Border
+                 Grid.Column="1"
+                 BackgroundColor="Coral"
+                 HeightRequest="62"
+     
+                 StrokeThickness="0"
+                 HorizontalOptions="Fill"
+                  IsVisible="{Binding Ativa}">
 
-            <Button Text="ENCERRAR JORNADA"
-                    IsVisible="{Binding Pausada}"
-                    HeightRequest="62"
-                    CornerRadius="28"
-                    FontSize="17"
-                    FontAttributes="Bold"
-                    BackgroundColor="#FF3B30"
-                    TextColor="White"
-                    Command="{Binding EncerrarJornadaCommand}"/>
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="0,28,0,28" />
+                </Border.StrokeShape>
 
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer
+                        Command="{Binding CancelarJornadaCommand}" />
+                </Border.GestureRecognizers>
+
+                <Label
+                     Text="CANCELAR"
+                     TextColor="DarkRed"
+                     FontSize="17"
+                     FontAttributes="Bold"
+                     HorizontalOptions="Fill"
+                     VerticalOptions="Center"
+                    HorizontalTextAlignment="Center"/>
+
+            </Border>
         </Grid>
 
     </Grid>

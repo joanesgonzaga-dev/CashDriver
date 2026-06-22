@@ -15,11 +15,11 @@ namespace CashDriver.ViewModels
         [ObservableProperty]
         private ObservableCollection<Jornada> jornadas = new();
 
-        public string QtdJornadas => Jornadas is null ? "00" : Jornadas.Count.ToString("D2");
+        public string QtdJornadas => Jornadas is null ? "00" : Jornadas.Where(j => j.Status != Models.Enums.EnumStatusJornada.Cancelada).Count().ToString("D2");
 
-        public decimal TotalGanhosPeriodo => Jornadas is null ? 0M : Jornadas.Sum(j => j.TotalGanhos);
+        public decimal TotalGanhosPeriodo => Jornadas is null ? 0M : Jornadas.Where(j => j.Status != Models.Enums.EnumStatusJornada.Cancelada) .Sum(j => j.TotalGanhos);
         
-        public decimal TotalDespesasPeriodo => Jornadas is null ? 0M : Jornadas.Sum(j => j.TotalDespesas);
+        public decimal TotalDespesasPeriodo => Jornadas is null ? 0M : Jornadas.Where(j => j.Status != Models.Enums.EnumStatusJornada.Cancelada).Sum(j => j.TotalDespesas);
         
         public decimal SaldoPeriodo => (TotalGanhosPeriodo - TotalDespesasPeriodo);
 
@@ -29,7 +29,7 @@ namespace CashDriver.ViewModels
             {
                 try
                 {
-                    var total = TimeSpan.FromTicks(Jornadas.Sum(j => j.TempoAcumulado?.Ticks ?? 0));
+                    var total = TimeSpan.FromTicks(Jornadas.Where(j => j.Status != Models.Enums.EnumStatusJornada.Cancelada).Sum(j => j.TempoAcumulado?.Ticks ?? 0));
                     return $"{(int)total.TotalHours:D2}:{total.Minutes:D2}:{total.Seconds:D2}";
                 }
                 catch (Exception ex)
@@ -43,7 +43,7 @@ namespace CashDriver.ViewModels
         {
             get
             {
-                decimal media = Jornadas.Count == 0 ? 0 : Jornadas.Sum(j => j.TotalGanhos - j.TotalDespesas) / Jornadas.Count;
+                decimal media = Jornadas.Count == 0 ? 0 : Jornadas.Where(j => j.Status != Models.Enums.EnumStatusJornada.Cancelada).Sum(j => j.TotalGanhos - j.TotalDespesas) / Jornadas.Count;
                 return media.ToString("C2");
             }
         }

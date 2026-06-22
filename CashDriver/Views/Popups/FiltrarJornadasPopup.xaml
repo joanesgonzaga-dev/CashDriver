@@ -165,31 +165,36 @@
                                     Margin="4"
                                     CornerRadius="10"
                                     BackgroundColor="#F3F5F8"
-                                    TextColor="#344054"/>
+                                    TextColor="#344054"
+                                    Command="{Binding FiltrarHojeCommand}"/>
 
                             <Button Text="Últimos 7 dias"
                                     Margin="4"
                                     CornerRadius="10"
                                     BackgroundColor="#DDF7EC"
-                                    TextColor="#0AAE63"/>
+                                    TextColor="#0AAE63"
+                                    Command="{Binding FiltrarUltimos7DiasCommand}"/>
 
                             <Button Text="Últimos 30 dias"
                                     Margin="4"
                                     CornerRadius="10"
                                     BackgroundColor="#F3F5F8"
-                                    TextColor="#344054"/>
+                                    TextColor="#344054"
+                                    Command="{Binding FiltrarUltimos30DiasCommand}"/>
 
                             <Button Text="Este mês"
                                     Margin="4"
                                     CornerRadius="10"
                                     BackgroundColor="#F3F5F8"
-                                    TextColor="#344054"/>
+                                    TextColor="#344054"
+                                    Command="{Binding FiltrarEsteMesCommand}"/>
 
                             <Button Text="Mês passado"
                                     Margin="4"
                                     CornerRadius="10"
                                     BackgroundColor="#F3F5F8"
-                                    TextColor="#344054"/>
+                                    TextColor="#344054"
+                                    Command="{Binding FiltrarMesPassadoCommand}"/>
 
                             <Button Text="Personalizado"
                                     Margin="4"

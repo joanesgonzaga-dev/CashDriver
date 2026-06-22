@@ -8,6 +8,6 @@ namespace CashDriver.Models.Enums
 {
     public enum EnumStatusJornada
     {
-        Inativa, Ativa, Pausa, Encerrada
+        Inativa, Ativa, Pausa, Encerrada, Cancelada
     }
 }

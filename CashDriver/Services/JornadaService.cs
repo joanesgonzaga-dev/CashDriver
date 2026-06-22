@@ -183,5 +183,21 @@ namespace CashDriver.Services
         {
             return await _persistenceService.ObterJornadasAsync();
         }
+
+        public async Task CancelarJornadaAsync()
+        {
+            try
+            {
+                JornadaAtual.Termino = DateTime.Now;
+                JornadaAtual.Status = EnumStatusJornada.Cancelada;
+                JornadaAtual.TempoAcumulado += (DateTime.Now - JornadaAtual.InicioPeriodoAtual);
+                await _persistenceService.SalvarJornadaAsync(JornadaAtual);
+                JornadaAtual = null;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

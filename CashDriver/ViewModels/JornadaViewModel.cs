@@ -13,14 +13,13 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Globalization;
 
 namespace CashDriver.ViewModels
 {
     public partial class JornadaViewModel : ObservableObject
     {
+        #region Campos e Propriedades
         private readonly JornadaService _jornadaService;
         public bool Ativa => _jornadaService.JornadaAtual != null && (_jornadaService.JornadaAtual?.Status == EnumStatusJornada.Ativa);
         public bool Pausada => _jornadaService.JornadaAtual != null && (_jornadaService.JornadaAtual?.Status ==  EnumStatusJornada.Pausa);
@@ -38,7 +37,8 @@ namespace CashDriver.ViewModels
         public string HoraInicio => "Iniciada às " + _jornadaService?.JornadaAtual?.Inicio.ToShortTimeString();
         
         public bool TemLancamentos =>  Extrato.Any() == true;
-        
+        #endregion
+
         public JornadaViewModel(JornadaService jornadaService)
         {
             _jornadaService = jornadaService;
@@ -95,101 +95,7 @@ namespace CashDriver.ViewModels
 
             #endregion
         }
-
-        private void AdicionaGanhoAoExtrato(Ganho ganho)
-        {
-            var item = new ExtratoItem
-            {
-                Id = Guid.NewGuid(),
-                LancamentoId = ganho.Id,
-                Tipo = Models.Enums.EnumTipoExtrato.Ganho,
-                Descricao = ganho.PlataformaNome,
-                Valor = ganho.Valor,
-                ValorTexto = $"+ {ganho.Valor.ToString("c", new CultureInfo("pt-br"))}",
-                ValorColor = Color.FromArgb("#19c37d"),
-                Data = ganho.CreatedAt
-            };
-            Extrato.Insert(0, item);
-        }
-
-        [RelayCommand]
-        private async Task AdicionarDespesa()
-        {
-            if (_jornadaService.JornadaAtual is null || _jornadaService.JornadaAtual.Status != EnumStatusJornada.Ativa)
-            {
-                await Shell.Current.DisplayAlert("Alerta!", "Não existe jornada Ativa para lançar despesas!", "OK");
-                return;
-            }
-
-            LancarDespesaPopup? popup = null;
-
-            var vm = new LancarDespesaPopupViewModel(
-                _jornadaService,
-                () => popup?.Close());
-
-            popup = new LancarDespesaPopup(vm);
-            
-            var obj = await Shell.Current.CurrentPage.ShowPopupAsync(popup);
-        }
-
-        private void AdicionaDespesaAoExtrato(Despesa despesa)
-        {
-            var tipo = _jornadaService?.CadastroDeDespesas.FirstOrDefault(t => t.Id == despesa.TipoDespesaId);
-            var item = new ExtratoItem()
-            {
-                Id = Guid.NewGuid(),
-                LancamentoId = despesa.Id,
-                Tipo = Models.Enums.EnumTipoExtrato.Despesa,
-                Descricao = tipo.DescricaoTipo,//despesa.Tipo?.DescricaoTipo ?? string.Empty; //tá disparando exception
-                Valor = despesa.Valor,
-                ValorTexto = $"- {despesa.Valor.ToString("C", new CultureInfo("pt-BR"))}",
-                ValorColor = Color.FromArgb("#FF4500"),
-                Data = despesa.CreatedAt
-            };
-            
-            Extrato.Insert(0, item);
-        }
-
-        [RelayCommand]
-        private async Task AdicionarGanho()
-        {
-
-            if (_jornadaService.JornadaAtual == null || _jornadaService.JornadaAtual.Status != EnumStatusJornada.Ativa)
-            {
-                await Shell.Current.DisplayAlert("Alerta!", "Não existe jornada Ativa para lançar ganhos!", "OK");
-                return;
-            }
-
-            LancarGanhoPopup? popup = null;
-            var vm = new LancarGanhoPopupViewModel(
-                _jornadaService,
-                () => popup?.Close());
-
-            popup = new LancarGanhoPopup(vm);
-
-            await Shell.Current.CurrentPage.ShowPopupAsync(popup);
-            NotificaUIValores();
-        }
-
-        [RelayCommand]
-        private async void EncerrarJornada()
-        {
-            // Simular Encerrar Jornada
-            var resultado =  await Application.Current.MainPage.DisplayAlert(
-                "Jornada",
-                "Confirma o encerramento da jornada?",
-                "SIM", "NÃO");
-
-            if (resultado)
-            {
-                //Persistir neste momento
-                await _jornadaService.EncerrarJornadaAsync();
-                _jornadaService.JornadaAtual = null;
-                Extrato.Clear();
-                NotificaUIStatus();
-                NotificaUIValores();
-            }
-        }
+        
 
         [RelayCommand]
         private async Task CriarMetaRapido()
@@ -197,7 +103,38 @@ namespace CashDriver.ViewModels
             await Shell.Current.GoToAsync(nameof(CriarMetaPage));
         }
 
+        public string DuracaoFormatada
+        {
+            get
+            {
+                var jornada = _jornadaService.JornadaAtual;
 
+                if (jornada == null)
+                    return "00:00:00";
+                return jornada?.DuracaoTotalJornada?.ToString(@"hh\:mm\:ss") ?? "00:00:00"; 
+            }
+        }
+
+        public void CarregarDadosJornada()
+        {
+            if (_jornadaService.JornadaAtual != null)
+            {
+                MontarExtrato();
+                NotificaUIStatus();
+                NotificaUIValores();
+            } 
+        }
+
+        public void CarregarMetas()
+        {
+            //Metas.Clear();
+            //foreach (var meta in _jornadaService.JornadaAtual?.Metas.Where(m => m.Selecionada) ?? Enumerable.Empty<Meta>())
+            //{
+            //    Metas.Add(meta);
+            //}
+        }
+
+        #region Ações de Jornada: Iniciar, Pausar, Retomar, Encerrar
         [RelayCommand]
         private async Task IniciarJornada()
         {
@@ -222,27 +159,154 @@ namespace CashDriver.ViewModels
             NotificaUIStatus();
         }
 
-        public string DuracaoFormatada
+        public async Task RecuperarJornadaAtivaAsync()
         {
-            get
-            {
-                var jornada = _jornadaService.JornadaAtual;
+            await _jornadaService.RecuperarJornadaAtivaAsync();
+        }
 
-                if (jornada == null)
-                    return "00:00:00";
-                return jornada?.DuracaoTotalJornada?.ToString(@"hh\:mm\:ss") ?? "00:00:00"; 
+        [RelayCommand]
+        private async Task PausarJornada()
+        {
+            if (_jornadaService?.JornadaAtual?.Status == EnumStatusJornada.Ativa)
+            {
+                await _jornadaService.PausarJornadaAsync();
+                await RecuperarJornadaAtivaAsync();
+                NotificaUIStatus();
             }
         }
 
-        public void CarregarDadosJornada()
+        [RelayCommand]
+        private async Task RetomarJornada()
         {
-            if (_jornadaService.JornadaAtual != null)
+            await _jornadaService.RetomarJornadaPausadaAsync();
+            await RecuperarJornadaAtivaAsync();
+            NotificaUIStatus();
+            NotificaUIValores();
+        }
+
+        [RelayCommand]
+        private async void EncerrarJornada()
+        {
+            // Simular Encerrar Jornada
+            var resultado = await Application.Current.MainPage.DisplayAlert(
+                "Jornada",
+                "Confirma o encerramento da jornada?",
+                "SIM", "NÃO");
+
+            if (resultado)
             {
-                MontarExtrato();
+                //Persistir neste momento
+                await _jornadaService.EncerrarJornadaAsync();
+                _jornadaService.JornadaAtual = null;
+                Extrato.Clear();
                 NotificaUIStatus();
                 NotificaUIValores();
-            } 
+            }
         }
+
+        [RelayCommand]
+        private async Task CancelarJornada()
+        {
+            var resultado = await Application.Current.MainPage.DisplayAlert(
+                "Jornada",
+                "Confirma o cancelamento da jornada? Todos os dados serão ignorados.",
+                "SIM", "NÃO");
+            if (resultado)
+            {
+                await _jornadaService.CancelarJornadaAsync();
+                _jornadaService.JornadaAtual = null;
+                Extrato.Clear();
+                NotificaUIStatus();
+                NotificaUIValores();
+            }
+        }
+        
+        #endregion
+
+        #region Ações de Lançamentos
+
+        [RelayCommand]
+        private async Task AdicionarDespesa()
+        {
+            if (_jornadaService.JornadaAtual is null || _jornadaService.JornadaAtual.Status != EnumStatusJornada.Ativa)
+            {
+                await Shell.Current.DisplayAlert("Alerta!", "Não existe jornada Ativa para lançar despesas!", "OK");
+                return;
+            }
+
+            LancarDespesaPopup? popup = null;
+
+            var vm = new LancarDespesaPopupViewModel(
+                _jornadaService,
+                () => popup?.Close());
+
+            popup = new LancarDespesaPopup(vm);
+
+            var obj = await Shell.Current.CurrentPage.ShowPopupAsync(popup);
+        }
+
+
+        [RelayCommand]
+        private async Task AdicionarGanho()
+        {
+
+            if (_jornadaService.JornadaAtual == null || _jornadaService.JornadaAtual.Status != EnumStatusJornada.Ativa)
+            {
+                await Shell.Current.DisplayAlert("Alerta!", "Não existe jornada Ativa para lançar ganhos!", "OK");
+                return;
+            }
+
+            LancarGanhoPopup? popup = null;
+            var vm = new LancarGanhoPopupViewModel(
+                _jornadaService,
+                () => popup?.Close());
+
+            popup = new LancarGanhoPopup(vm);
+
+            await Shell.Current.CurrentPage.ShowPopupAsync(popup);
+            NotificaUIValores();
+        }
+        #endregion
+
+        #region Ações de Extrato
+
+        [RelayCommand]
+        public async Task DeletarLancamentoExtrato(ExtratoItem item)
+        {
+            var result = await Application.Current.MainPage.DisplayAlert(
+            "Exxcluir",
+            "Confirma a exclusão do lançamento?",
+            "SIM",
+            "NÃO");
+
+            if (!result)
+            {
+                return;
+            }
+
+            //Não confundir com item.Id, que é o Id do ExtratoItem (apenas para controle da UI), o item.LancamentoId é o Id do ganho ou despesa na jornada
+            if (item.Tipo == EnumTipoExtrato.Ganho)
+            {
+                await _jornadaService.RemoverGanhoAsync(item.LancamentoId);
+            }
+
+            else if (item.Tipo == EnumTipoExtrato.Despesa)
+            {
+                await _jornadaService.RemoverDespesaAsync(item.LancamentoId);
+            }
+
+            var itemToRemove = Extrato.FirstOrDefault(i => i.LancamentoId == item.LancamentoId);
+            if (itemToRemove != null)
+            {
+                Extrato.Remove(itemToRemove);
+            }
+
+            NotificaUIValores();
+        }
+
+        #endregion
+
+        #region Operações de Extrato
 
         private void MontarExtrato()
         {
@@ -298,73 +362,40 @@ namespace CashDriver.ViewModels
             }
         }
 
-        public void CarregarMetas()
+        private void AdicionaGanhoAoExtrato(Ganho ganho)
         {
-            //Metas.Clear();
-            //foreach (var meta in _jornadaService.JornadaAtual?.Metas.Where(m => m.Selecionada) ?? Enumerable.Empty<Meta>())
-            //{
-            //    Metas.Add(meta);
-            //}
+            var item = new ExtratoItem
+            {
+                Id = Guid.NewGuid(),
+                LancamentoId = ganho.Id,
+                Tipo = Models.Enums.EnumTipoExtrato.Ganho,
+                Descricao = ganho.PlataformaNome,
+                Valor = ganho.Valor,
+                ValorTexto = $"+ {ganho.Valor.ToString("c", new CultureInfo("pt-br"))}",
+                ValorColor = Color.FromArgb("#19c37d"),
+                Data = ganho.CreatedAt
+            };
+            Extrato.Insert(0, item);
         }
 
-        [RelayCommand]
-        public async Task DeletarLancamentoExtrato(ExtratoItem item)
+        private void AdicionaDespesaAoExtrato(Despesa despesa)
         {
-            var result = await Application.Current.MainPage.DisplayAlert(
-            "Exxcluir",
-            "Confirma a exclusão do lançamento?",
-            "SIM",
-            "NÃO");
-
-            if (!result)
+            var tipo = _jornadaService?.CadastroDeDespesas.FirstOrDefault(t => t.Id == despesa.TipoDespesaId);
+            var item = new ExtratoItem()
             {
-                return;
-            }
+                Id = Guid.NewGuid(),
+                LancamentoId = despesa.Id,
+                Tipo = Models.Enums.EnumTipoExtrato.Despesa,
+                Descricao = tipo.DescricaoTipo,//despesa.Tipo?.DescricaoTipo ?? string.Empty; //tá disparando exception
+                Valor = despesa.Valor,
+                ValorTexto = $"- {despesa.Valor.ToString("C", new CultureInfo("pt-BR"))}",
+                ValorColor = Color.FromArgb("#FF4500"),
+                Data = despesa.CreatedAt
+            };
 
-            //Não confundir com item.Id, que é o Id do ExtratoItem (apenas para controle da UI), o item.LancamentoId é o Id do ganho ou despesa na jornada
-            if (item.Tipo == EnumTipoExtrato.Ganho)
-            {
-                await _jornadaService.RemoverGanhoAsync(item.LancamentoId);
-            }
-
-            else if (item.Tipo == EnumTipoExtrato.Despesa)
-            {
-                await _jornadaService.RemoverDespesaAsync(item.LancamentoId);
-            }
-
-            var itemToRemove = Extrato.FirstOrDefault(i => i.LancamentoId == item.LancamentoId);
-            if (itemToRemove != null)
-            {
-                Extrato.Remove(itemToRemove);
-            }
-
-            NotificaUIValores();
+            Extrato.Insert(0, item);
         }
-
-        public async Task RecuperarJornadaAtivaAsync()
-        {
-            await _jornadaService.RecuperarJornadaAtivaAsync();
-        }
-
-        [RelayCommand]
-        private async Task PausarJornada()
-        {
-            if (_jornadaService?.JornadaAtual?.Status == EnumStatusJornada.Ativa)
-            {
-                await _jornadaService.PausarJornadaAsync();
-                await RecuperarJornadaAtivaAsync();
-                NotificaUIStatus();
-            }
-        }
-
-        [RelayCommand]
-        private async Task RetomarJornada()
-        {
-            await _jornadaService.RetomarJornadaPausadaAsync();
-            await RecuperarJornadaAtivaAsync();
-            NotificaUIStatus();
-            NotificaUIValores();
-        }
+        #endregion
 
         private void NotificaUIStatus()
         {

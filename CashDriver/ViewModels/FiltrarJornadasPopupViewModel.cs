@@ -24,20 +24,20 @@ namespace CashDriver.ViewModels
 
         private readonly Action _fechar;
     
-            public FiltrarJornadasPopupViewModel(JornadaService jornadaService, Action fechar)
-            {
-                _jornadaService = jornadaService;
-            _fechar = fechar;
-            }
+        public FiltrarJornadasPopupViewModel(JornadaService jornadaService, Action fechar)
+        {
+            _jornadaService = jornadaService;
+        _fechar = fechar;
+        }
     
-            [RelayCommand]
-            private async Task Filtrar()
-            {
-            //if (DataFinal < DataInicial)
-            //{
-            //    Shell.Current.DisplayAlert("Atenção", "A data final deve ser maior ou igual à data inicial!", "OK");
-            //    return;
-            //}
+        [RelayCommand]
+        private async Task Filtrar()
+        {
+        //if (DataFinal < DataInicial)
+        //{
+        //    Shell.Current.DisplayAlert("Atenção", "A data final deve ser maior ou igual à data inicial!", "OK");
+        //    return;
+        //}
 
             FiltrarJornadasPopup? popup = null;
             var vm = new FiltrarJornadasPopupViewModel(
@@ -49,6 +49,51 @@ namespace CashDriver.ViewModels
             await Shell.Current.CurrentPage.ShowPopupAsync(popup);
 
             _fechar();
+    }
+
+        [RelayCommand]
+        private void FiltrarHoje()
+        {
+            DataInicial = DateTime.Today;
+            DataFinal = DateTime.Today;
+        }
+
+        [RelayCommand]
+        private void FiltrarUltimos7Dias()
+        {
+            DataInicial = DateTime.Today.AddDays(-6);
+            DataFinal = DateTime.Today;
+        }
+
+        [RelayCommand]
+        private void FiltrarUltimos30Dias()
+        {
+            DataInicial = DateTime.Today.AddDays(-29);
+            DataFinal = DateTime.Today;
+        }
+
+        [RelayCommand]
+        private void FiltrarEsteMes()
+        {
+            DataInicial = new DateTime(
+                DateTime.Today.Year,
+                DateTime.Today.Month,
+                1);
+
+            DataFinal = DateTime.Today;
+        }
+
+        [RelayCommand]
+        private void FiltrarMesPassado()
+        {
+            var primeiroDiaMesAtual = new DateTime(
+                DateTime.Today.Year,
+                DateTime.Today.Month,
+                1);
+
+            DataInicial = primeiroDiaMesAtual.AddMonths(-1);
+
+            DataFinal = primeiroDiaMesAtual.AddDays(-1);
         }
     }
 }

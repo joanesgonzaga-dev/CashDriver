@@ -220,5 +220,10 @@ namespace CashDriver.Services
                 File = new ShareFile(destino)
             });
         }
+
+        internal async Task CancelarJornadaAsync(Jornada? jornadaAtual)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
